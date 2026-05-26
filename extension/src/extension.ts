@@ -34,7 +34,7 @@ async function showWelcomeIfNeeded(
 
   const support = "Support";
   const choice = await vscode.window.showInformationMessage(
-    "Thanks for installing Auto Gitmoji! ❤️ If this saves you time, consider buying me a coffee.",
+    "Thanks for installing Auto Gitmoji & Docs from KueTech Digital! ❤️ If this saves you time, consider buying me a coffee.",
     support
   );
 
@@ -74,7 +74,7 @@ async function showMajorUpdateReminderIfNeeded(
 
   const support = "Support";
   const choice = await vscode.window.showInformationMessage(
-    "Auto Gitmoji was updated! This project stays free thanks to supporters.",
+    "Auto Gitmoji & Docs was updated! KueTech Digital — thanks to supporters, this stays free.",
     support
   );
 

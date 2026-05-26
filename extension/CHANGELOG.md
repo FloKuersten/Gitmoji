@@ -1,7 +1,10 @@
 # Changelog
 
+All releases by **KueTech Digital** — [kuetech.at](https://kuetech.at)
+
 ## 1.0.0
 
+- Initial release by KueTech Digital
 - Local JSON + regex Gitmoji matching for commit messages and docstrings
 - SCM commit formatter, docstring formatter, and Gitmoji quick-pick
 - Support webview with QR code, Buy Me a Coffee, and KueTech website link

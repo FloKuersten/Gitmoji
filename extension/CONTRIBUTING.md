@@ -1,6 +1,6 @@
 # Contributing to Auto Gitmoji & Docs
 
-Thank you for helping improve this privacy-first, local-only VS Code extension.
+Thank you for helping improve this **KueTech Digital** open-source extension — privacy-first and local-only.
 
 ## Adding keyword → Gitmoji mappings
 

@@ -2,7 +2,8 @@
 
 Guide for the [Visual Studio Marketplace](https://marketplace.visualstudio.com/) and for **Cursor IDE** users.
 
-**Developer:** [KueTech Digital](https://kuetech.at)  
+**Publisher / company:** **KueTech Digital** — [kuetech.at](https://kuetech.at)  
+**Marketplace publisher ID:** `kuetech` (must match your [publisher account](https://marketplace.visualstudio.com/manage))  
 **Support:** [buymeacoffee.com/kuetech](https://www.buymeacoffee.com/kuetech)
 
 ---
@@ -145,7 +146,7 @@ After approval (usually minutes to a few hours), the extension appears at:
 
 Use this in the publisher portal if asked for a short description:
 
-> Insert Gitmojis into Git commits and docstrings offline. Local dictionary, no AI, no cloud. Built by KueTech Digital.
+> Insert Gitmojis into Git commits and docstrings offline. Local dictionary, no AI, no cloud. A KueTech Digital product.
 
 **Category:** Other  
 **Tags:** gitmoji, git, commit, emoji, conventional commits, docstring  

@@ -62,7 +62,7 @@ export class SupportPanel {
 
     const panel = vscode.window.createWebviewPanel(
       SupportPanel.viewType,
-      "Support Auto Gitmoji",
+      "KueTech Digital — Support",
       column ?? vscode.ViewColumn.One,
       {
         enableScripts: true,
@@ -94,7 +94,7 @@ export class SupportPanel {
   <meta charset="UTF-8" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${cspSource} https:; style-src ${cspSource} 'unsafe-inline'; script-src ${cspSource};" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Support Auto Gitmoji</title>
+  <title>KueTech Digital — Support</title>
   <style>
     :root {
       --bg: #0f1419;
@@ -127,7 +127,8 @@ export class SupportPanel {
       text-align: center;
       box-shadow: 0 24px 48px rgba(0,0,0,0.35);
     }
-    h1 { font-size: 1.35rem; margin: 0 0 0.5rem; font-weight: 600; }
+    h1 { font-size: 1.35rem; margin: 0 0 0.25rem; font-weight: 600; letter-spacing: 0.02em; }
+    .tagline { color: var(--text); font-size: 0.9rem; margin: 0 0 0.75rem !important; opacity: 0.9; }
     p { color: var(--muted); line-height: 1.55; margin: 0 0 1.5rem; font-size: 0.95rem; }
     .qr-wrap {
       background: #fff;
@@ -163,8 +164,9 @@ export class SupportPanel {
 </head>
 <body>
   <div class="card">
-    <h1>Support Auto Gitmoji ❤️</h1>
-    <p>This extension is free, local, and private. If it saves you time, scan the QR or buy me a coffee.</p>
+    <h1>KueTech Digital</h1>
+    <p class="tagline">Auto Gitmoji &amp; Docs — free, local, and private.</p>
+    <p>If this extension saves you time, scan the QR or buy me a coffee.</p>
     <div class="qr-wrap">
       <img src="${qrUri}" alt="Donate QR Code" />
     </div>
@@ -172,7 +174,7 @@ export class SupportPanel {
       <button class="primary" id="bmac">Buy Me a Coffee</button>
       <button class="secondary" id="site">KueTech Digital</button>
     </div>
-    <p class="note">Built by <a href="#" id="siteLink">kuetech.at</a> — local, private, no AI.</p>
+    <p class="note"><strong>KueTech Digital</strong> · <a href="#" id="siteLink">kuetech.at</a></p>
   </div>
   <script>
     const vscode = acquireVsCodeApi();

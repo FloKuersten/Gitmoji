@@ -2,10 +2,16 @@
 
 ![KueTech Digital](media/logo.png)
 
-**Free, local, privacy-first** Gitmoji helper for **VS Code** and **Cursor**.  
+A **KueTech Digital** product — free, local, privacy-first Gitmoji helper for **VS Code** and **Cursor**.
+
 Inserts emojis into Git commit messages and docstrings from a JSON dictionary on your machine — **no AI, no backend, no API calls** for core features.
 
-Built by **[KueTech Digital](https://kuetech.at)** · [GitHub](https://github.com/FloKuersten/Gitmoji) · [Buy me a coffee](https://www.buymeacoffee.com/kuetech)
+| | |
+|---|---|
+| **Company** | [KueTech Digital](https://kuetech.at) |
+| **Website** | [kuetech.at](https://kuetech.at) |
+| **GitHub** | [FloKuersten/Gitmoji](https://github.com/FloKuersten/Gitmoji) |
+| **Support** | [buymeacoffee.com/kuetech](https://www.buymeacoffee.com/kuetech) |
 
 ---
 
@@ -15,11 +21,11 @@ Built by **[KueTech Digital](https://kuetech.at)** · [GitHub](https://github.co
 - **Format commit message** — SCM / Git input box
 - **Format docstring** — first line of selection or current line
 - **Quick-pick** — any Gitmoji from the dictionary
-- **Support panel** — QR donate image, Buy Me a Coffee, link to [kuetech.at](https://kuetech.at)
+- **Support panel** — QR code, Buy Me a Coffee, [KueTech Digital](https://kuetech.at)
 
 ## Works in Cursor?
 
-**Yes.** Cursor uses the same extension format as VS Code. Install from the Marketplace (after publish) or from a `.vsix` file. See [PUBLISHING.md](./PUBLISHING.md) for Cursor install steps.
+**Yes.** See [PUBLISHING.md](./PUBLISHING.md).
 
 ## Commands
 
@@ -28,9 +34,7 @@ Built by **[KueTech Digital](https://kuetech.at)** · [GitHub](https://github.co
 | `Auto Gitmoji: Format Commit Message` | Add Gitmoji to Git commit box |
 | `Auto Gitmoji: Format Docstring / Comment` | Add Gitmoji to comment/doc line |
 | `Auto Gitmoji: Pick and Insert Gitmoji` | Choose emoji from list |
-| `Auto Gitmoji: Support the Developer` | Support webview |
-
-**SCM:** Git commit icon in the Source Control title bar (when Git is active).
+| `Auto Gitmoji: Support the Developer` | KueTech Digital support webview |
 
 ## Examples
 
@@ -60,12 +64,12 @@ Press **F5** to run the Extension Development Host.
 
 ## Publish
 
-See **[PUBLISHING.md](./PUBLISHING.md)** for Marketplace upload, versioning, and Cursor notes.
+[PUBLISHING.md](./PUBLISHING.md) — Marketplace upload under publisher **kuetech** (KueTech Digital).
 
 ## Contributing
 
-[CONTRIBUTING.md](./CONTRIBUTING.md) — add keyword mappings to `data/gitmoji-map.json`.
+[CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## License
 
-MIT © [KueTech Digital](https://kuetech.at)
+MIT © **KueTech Digital** — [kuetech.at](https://kuetech.at)
