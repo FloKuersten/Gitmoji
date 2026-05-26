@@ -2,7 +2,7 @@
   "name": "auto-gitmoji-docs",
   "displayName": "Auto Gitmoji & Docs",
   "description": "Insert Gitmojis into commit messages and docstrings using a local dictionary — no AI, no network. By KueTech Digital.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "kuetech",
   "license": "MIT",
   "icon": "media/icon.png",
