@@ -1,0 +1,150 @@
+{
+  "version": 1,
+  "mappings": [
+    {
+      "keywords": ["feat", "feature", "add", "new"],
+      "gitmoji": "✨",
+      "description": "Introduce new features"
+    },
+    {
+      "keywords": ["fix", "bug", "hotfix", "patch"],
+      "gitmoji": "🐛",
+      "description": "Fix a bug"
+    },
+    {
+      "keywords": ["docs", "documentation", "doc", "readme"],
+      "gitmoji": "📚",
+      "description": "Add or update documentation"
+    },
+    {
+      "keywords": ["style", "format", "lint", "prettier", "eslint"],
+      "gitmoji": "💎",
+      "description": "Improve structure / format"
+    },
+    {
+      "keywords": ["refactor", "restructure", "cleanup", "clean"],
+      "gitmoji": "♻️",
+      "description": "Refactor code"
+    },
+    {
+      "keywords": ["perf", "performance", "optimize", "speed"],
+      "gitmoji": "⚡️",
+      "description": "Improve performance"
+    },
+    {
+      "keywords": ["test", "tests", "testing", "spec", "coverage"],
+      "gitmoji": "🧪",
+      "description": "Add or update tests"
+    },
+    {
+      "keywords": ["build", "ci", "cd", "pipeline", "workflow"],
+      "gitmoji": "👷",
+      "description": "Add or update CI build system"
+    },
+    {
+      "keywords": ["chore", "deps", "dependency", "bump", "upgrade"],
+      "gitmoji": "🔧",
+      "description": "Chore / tooling"
+    },
+    {
+      "keywords": ["revert", "rollback"],
+      "gitmoji": "⏪",
+      "description": "Revert changes"
+    },
+    {
+      "keywords": ["security", "secure", "vuln", "cve"],
+      "gitmoji": "🔒",
+      "description": "Security improvements"
+    },
+    {
+      "keywords": ["deploy", "release", "ship", "publish"],
+      "gitmoji": "🚀",
+      "description": "Deploy / release"
+    },
+    {
+      "keywords": ["init", "bootstrap", "scaffold"],
+      "gitmoji": "🎉",
+      "description": "Begin a project"
+    },
+    {
+      "keywords": ["remove", "delete", "drop"],
+      "gitmoji": "🔥",
+      "description": "Remove code or files"
+    },
+    {
+      "keywords": ["move", "rename", "relocate"],
+      "gitmoji": "🚚",
+      "description": "Move or rename"
+    },
+    {
+      "keywords": ["ui", "ux", "design", "css", "layout"],
+      "gitmoji": "💄",
+      "description": "UI / style updates"
+    },
+    {
+      "keywords": ["i18n", "l10n", "locale", "translation"],
+      "gitmoji": "🌐",
+      "description": "Internationalization"
+    },
+    {
+      "keywords": ["config", "settings", "env"],
+      "gitmoji": "🔧",
+      "description": "Configuration changes"
+    },
+    {
+      "keywords": ["breaking", "break"],
+      "gitmoji": "💥",
+      "description": "Breaking changes"
+    },
+    {
+      "keywords": ["wip", "draft"],
+      "gitmoji": "🚧",
+      "description": "Work in progress"
+    },
+    {
+      "keywords": ["merge", "conflict"],
+      "gitmoji": "🔀",
+      "description": "Merge branches"
+    },
+    {
+      "keywords": ["db", "database", "migration", "schema"],
+      "gitmoji": "🗃️",
+      "description": "Database changes"
+    },
+    {
+      "keywords": ["log", "logging", "telemetry"],
+      "gitmoji": "🔊",
+      "description": "Add or update logs"
+    },
+    {
+      "keywords": ["mute", "remove-log"],
+      "gitmoji": "🔇",
+      "description": "Remove logs"
+    },
+    {
+      "keywords": ["accessibility", "a11y"],
+      "gitmoji": "♿",
+      "description": "Accessibility"
+    },
+    {
+      "keywords": ["analytics", "tracking"],
+      "gitmoji": "📈",
+      "description": "Analytics"
+    },
+    {
+      "keywords": ["mock", "stub", "fake"],
+      "gitmoji": "🤡",
+      "description": "Mock things"
+    },
+    {
+      "keywords": ["egg", "easter"],
+      "gitmoji": "🥚",
+      "description": "Easter egg"
+    },
+    {
+      "keywords": ["comment", "todo", "note"],
+      "gitmoji": "💡",
+      "description": "Comments / ideas"
+    }
+  ]
+}

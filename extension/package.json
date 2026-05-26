@@ -1,0 +1,125 @@
+{
+  "name": "auto-gitmoji-docs",
+  "displayName": "Auto Gitmoji & Docs",
+  "description": "Insert Gitmojis into commit messages and docstrings using a local dictionary — no AI, no network, zero latency.",
+  "version": "1.0.0",
+  "publisher": "kuetech",
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "homepage": "https://kuetech.at",
+  "author": {
+    "name": "KueTech Digital",
+    "url": "https://kuetech.at"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FloKuersten/Gitmoji.git"
+  },
+  "bugs": {
+    "url": "https://github.com/FloKuersten/Gitmoji/issues"
+  },
+  "galleryBanner": {
+    "color": "#0f1419",
+    "theme": "dark"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "SCM Providers"
+  ],
+  "keywords": [
+    "gitmoji",
+    "git",
+    "commit",
+    "emoji",
+    "conventional commits",
+    "docstring"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "autoGitmoji.formatCommitMessage",
+        "title": "Auto Gitmoji: Format Commit Message",
+        "icon": "$(git-commit)"
+      },
+      {
+        "command": "autoGitmoji.formatDocstring",
+        "title": "Auto Gitmoji: Format Docstring / Comment",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "autoGitmoji.openSupport",
+        "title": "Auto Gitmoji: Support the Developer",
+        "icon": "$(heart)"
+      },
+      {
+        "command": "autoGitmoji.insertGitmoji",
+        "title": "Auto Gitmoji: Pick and Insert Gitmoji",
+        "icon": "$(smiley)"
+      }
+    ],
+    "menus": {
+      "scm/title": [
+        {
+          "command": "autoGitmoji.formatCommitMessage",
+          "group": "navigation@99",
+          "when": "scmProvider == git"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "autoGitmoji.formatDocstring",
+          "group": "autoGitmoji@1",
+          "when": "editorTextFocus"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Auto Gitmoji & Docs",
+      "properties": {
+        "autoGitmoji.buyMeACoffeeUrl": {
+          "type": "string",
+          "default": "https://www.buymeacoffee.com/kuetech",
+          "description": "Buy Me a Coffee profile URL opened from the Support webview."
+        },
+        "autoGitmoji.websiteUrl": {
+          "type": "string",
+          "default": "https://kuetech.at",
+          "description": "Developer website opened from the Support webview."
+        },
+        "autoGitmoji.autoFormatCommitOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "When enabled, formats the Git commit input when it loses focus (if Git extension is available)."
+        },
+        "autoGitmoji.notifyOnMajorUpdates": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show a one-time support reminder after major extension updates."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint .",
+    "package": "vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3",
+    "@vscode/vsce": "^2.22.0"
+  }
+}
