@@ -1,31 +1,30 @@
-import type { GitmojiDictionary, GitmojiMapping } from "./types";
-
-const LEADING_EMOJI = /^\p{Extended_Pictographic}/u;
-
-const CONVENTIONAL_PREFIX = /^([A-Za-z][\w-]*)(\([^)]*\))?!?:\s*/;
-
-const DOCSTRING_KEYWORD_PATTERNS = [
-  /^\*\s*@?([\w-]+)/,
-  /^\/\/+\s*([\w-]+)/,
-  /^#+\s*([\w-]+)/,
-  /^(?:"""|''')\s*([\w-]+)/,
-  /^<!--\s*([\w-]+)/,
-];
+import type { GitmojiDictionary, GitmojiMapping, GitmojiPosition } from "./types";
 
 /**
- * Orders mappings so that the longest keyword wins when several entries could
- * match the same token. Sorting once at load time keeps matching allocation-free.
+ * Matches any leading emoji, including ranges the previous explicit ranges
+ * missed (arrows, enclosed symbols, dingbats). Keycap sequences start with an
+ * ASCII character, so they need a separate alternative.
  */
+const EMOJI_PREFIX = /^(?:\p{Extended_Pictographic}|[0-9#*]\uFE0F?\u20E3)/u;
+
+const CONVENTIONAL_PREFIX = /^(\w+)(\([^)]*\))?(!)?:\s*/;
+
+const DOCSTRING_KEYWORD_PATTERNS = [
+  /^\*\s*@?(\w+)/,
+  /^\/\/+\s*(\w+)/,
+  /^#+\s*(\w+)/,
+  /^(?:"""|''')\s*(\w+)/,
+  /^--\s*(\w+)/,
+];
+
 export function loadSortedMappings(
   dictionary: GitmojiDictionary
 ): GitmojiMapping[] {
-  return [...dictionary.mappings]
-    .filter((mapping) => mapping.keywords.length > 0 && mapping.gitmoji)
-    .sort((a, b) => {
-      const maxA = Math.max(...a.keywords.map((k) => k.length));
-      const maxB = Math.max(...b.keywords.map((k) => k.length));
-      return maxB - maxA;
-    });
+  return [...dictionary.mappings].sort((a, b) => {
+    const maxA = Math.max(0, ...a.keywords.map((k) => k.length));
+    const maxB = Math.max(0, ...b.keywords.map((k) => k.length));
+    return maxB - maxA;
+  });
 }
 
 export function hasLeadingGitmoji(text: string): boolean {
@@ -33,7 +32,7 @@ export function hasLeadingGitmoji(text: string): boolean {
   if (!trimmed) {
     return false;
   }
-  return LEADING_EMOJI.test(trimmed);
+  return EMOJI_PREFIX.test(trimmed);
 }
 
 function findMapping(
@@ -80,9 +79,31 @@ export function matchGitmoji(
   return findMapping(keyword, mappings) ?? null;
 }
 
+/**
+ * Inserts the gitmoji after the conventional-commit type when the caller asked
+ * for `after-type` and the message actually has a type prefix. Falls back to a
+ * plain prefix otherwise, so the setting can never drop the emoji.
+ */
+function applyPosition(
+  message: string,
+  gitmoji: string,
+  position: GitmojiPosition
+): string {
+  if (position === "after-type") {
+    const conventional = message.match(CONVENTIONAL_PREFIX);
+    if (conventional) {
+      const prefix = conventional[0];
+      return `${prefix}${gitmoji} ${message.slice(prefix.length)}`;
+    }
+  }
+
+  return `${gitmoji} ${message}`;
+}
+
 export function formatCommitMessage(
   message: string,
-  mappings: GitmojiMapping[]
+  mappings: GitmojiMapping[],
+  position: GitmojiPosition = "prefix"
 ): string {
   const trimmed = message.trim();
   if (!trimmed || hasLeadingGitmoji(trimmed)) {
@@ -94,7 +115,7 @@ export function formatCommitMessage(
     return message;
   }
 
-  return `${mapping.gitmoji} ${trimmed}`;
+  return applyPosition(trimmed, mapping.gitmoji, position);
 }
 
 export function formatDocstringLine(
@@ -109,7 +130,7 @@ export function formatDocstringLine(
   let keyword: string | undefined;
   for (const pattern of DOCSTRING_KEYWORD_PATTERNS) {
     const match = trimmed.match(pattern);
-    if (match) {
+    if (match?.[1]) {
       keyword = match[1];
       break;
     }
@@ -131,8 +152,8 @@ export function formatDocstringLine(
 }
 
 /**
- * Formats the summary (first non-empty) line of a comment or docstring block,
- * preserving the block's original line endings so Windows files keep CRLF.
+ * Formats the first non-empty line of a block while keeping the document's
+ * original line endings, so editing a CRLF file does not rewrite every line.
  */
 export function formatDocstringBlock(
   text: string,
@@ -141,16 +162,11 @@ export function formatDocstringBlock(
   const eol = text.includes("\r\n") ? "\r\n" : "\n";
   const lines = text.split(/\r?\n/);
 
-  const summaryIndex = lines.findIndex((line) => line.trim().length > 0);
+  const summaryIndex = lines.findIndex((l) => l.trim().length > 0);
   if (summaryIndex === -1) {
     return text;
   }
 
-  const formatted = formatDocstringLine(lines[summaryIndex], mappings);
-  if (formatted === lines[summaryIndex]) {
-    return text;
-  }
-
-  lines[summaryIndex] = formatted;
+  lines[summaryIndex] = formatDocstringLine(lines[summaryIndex], mappings);
   return lines.join(eol);
 }

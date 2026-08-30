@@ -6,20 +6,77 @@ import {
   formatDocstringBlock,
   loadSortedMappings,
 } from "./gitmojiMatcher";
-import { getActiveCommitMessage, setActiveCommitMessage } from "./scmIntegration";
+import {
+  getActiveCommitMessage,
+  setActiveCommitMessage,
+} from "./scmIntegration";
 import { registerSupportCommand, SupportPanel } from "./supportPanel";
-import type { GitmojiDictionary } from "./types";
+import type { GitmojiDictionary, GitmojiMapping } from "./types";
 
 const WELCOME_KEY = "autoGitmoji.welcomeShown";
 const LAST_VERSION_KEY = "autoGitmoji.lastSeenVersion";
 
-let sortedMappings = loadSortedMappings({ version: 1, mappings: [] });
+/**
+ * Minimal dictionary used only when the bundled JSON cannot be read or parsed,
+ * so a corrupted install degrades instead of failing activation.
+ */
+const FALLBACK_MAPPINGS: GitmojiMapping[] = [
+  { keywords: ["feat", "feature", "add"], gitmoji: "✨" },
+  { keywords: ["fix", "bug"], gitmoji: "🐛" },
+  { keywords: ["docs", "doc"], gitmoji: "📚" },
+  { keywords: ["refactor"], gitmoji: "♻️" },
+  { keywords: ["test", "tests"], gitmoji: "🧪" },
+  { keywords: ["chore"], gitmoji: "🔧" },
+];
+
+let sortedMappings: GitmojiMapping[] = loadSortedMappings({
+  version: 1,
+  mappings: FALLBACK_MAPPINGS,
+});
+
+function isValidMapping(value: unknown): value is GitmojiMapping {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+
+  const candidate = value as Partial<GitmojiMapping>;
+  return (
+    typeof candidate.gitmoji === "string" &&
+    candidate.gitmoji.length > 0 &&
+    Array.isArray(candidate.keywords) &&
+    candidate.keywords.length > 0 &&
+    candidate.keywords.every((kw) => typeof kw === "string" && kw.length > 0)
+  );
+}
 
 function loadDictionary(context: vscode.ExtensionContext): void {
   const dictPath = path.join(context.extensionPath, "data", "gitmoji-map.json");
-  const raw = fs.readFileSync(dictPath, "utf8");
-  const dictionary = JSON.parse(raw) as GitmojiDictionary;
-  sortedMappings = loadSortedMappings(dictionary);
+
+  try {
+    const raw = fs.readFileSync(dictPath, "utf8");
+    const dictionary = JSON.parse(raw) as GitmojiDictionary;
+    const mappings = Array.isArray(dictionary?.mappings)
+      ? dictionary.mappings.filter(isValidMapping)
+      : [];
+
+    if (mappings.length === 0) {
+      throw new Error("Dictionary contains no valid mappings.");
+    }
+
+    sortedMappings = loadSortedMappings({
+      version: dictionary.version ?? 1,
+      mappings,
+    });
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    sortedMappings = loadSortedMappings({
+      version: 1,
+      mappings: FALLBACK_MAPPINGS,
+    });
+    vscode.window.showErrorMessage(
+      `Auto Gitmoji: could not load the emoji dictionary (${detail}). Using built-in defaults.`
+    );
+  }
 }
 
 async function showWelcomeIfNeeded(
@@ -83,14 +140,12 @@ async function showMajorUpdateReminderIfNeeded(
   }
 }
 
-function registerFormatCommitCommand(
-  context: vscode.ExtensionContext
-): void {
+function registerFormatCommitCommand(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "autoGitmoji.formatCommitMessage",
       async () => {
-        const current = getActiveCommitMessage();
+        const current = await getActiveCommitMessage();
         if (current === undefined) {
           vscode.window.showWarningMessage(
             "Open the Source Control view and ensure the Git extension is enabled."
@@ -106,12 +161,12 @@ function registerFormatCommitCommand(
           return;
         }
 
-        if (!setActiveCommitMessage(formatted)) {
-          vscode.window.showErrorMessage("Could not update the commit message.");
+        if (!(await setActiveCommitMessage(formatted))) {
+          vscode.window.showErrorMessage(
+            "Could not update the commit message."
+          );
           return;
         }
-
-        vscode.window.showInformationMessage("Commit message formatted with Gitmoji.");
       }
     )
   );
@@ -133,8 +188,7 @@ function registerFormatDocstringCommand(
 
       let range: vscode.Range;
       if (selection.isEmpty) {
-        const line = document.lineAt(selection.active.line);
-        range = line.range;
+        range = document.lineAt(selection.active.line).range;
       } else {
         range = new vscode.Range(
           selection.start.line,
@@ -161,9 +215,7 @@ function registerFormatDocstringCommand(
   );
 }
 
-function registerInsertPickerCommand(
-  context: vscode.ExtensionContext
-): void {
+function registerInsertPickerCommand(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.commands.registerCommand("autoGitmoji.insertGitmoji", async () => {
       const items = sortedMappings.map((m) => ({
@@ -175,6 +227,7 @@ function registerInsertPickerCommand(
 
       const picked = await vscode.window.showQuickPick(items, {
         placeHolder: "Select a Gitmoji to insert",
+        matchOnDetail: true,
       });
 
       if (!picked) {
@@ -189,37 +242,37 @@ function registerInsertPickerCommand(
         return;
       }
 
-      const current = getActiveCommitMessage();
+      const current = await getActiveCommitMessage();
       if (current !== undefined) {
-        setActiveCommitMessage(`${picked.gitmoji} ${current}`);
+        await setActiveCommitMessage(`${picked.gitmoji} ${current}`.trim());
       }
     })
   );
 }
 
 function registerAutoFormatOnBlur(context: vscode.ExtensionContext): void {
-  const disposable = vscode.window.onDidChangeWindowState(async (state) => {
-    if (state.focused) {
-      return;
-    }
+  context.subscriptions.push(
+    vscode.window.onDidChangeWindowState(async (state) => {
+      if (state.focused) {
+        return;
+      }
 
-    const config = vscode.workspace.getConfiguration("autoGitmoji");
-    if (!config.get<boolean>("autoFormatCommitOnSave", false)) {
-      return;
-    }
+      const config = vscode.workspace.getConfiguration("autoGitmoji");
+      if (!config.get<boolean>("autoFormatCommitOnSave", false)) {
+        return;
+      }
 
-    const current = getActiveCommitMessage();
-    if (!current?.trim()) {
-      return;
-    }
+      const current = await getActiveCommitMessage();
+      if (!current?.trim()) {
+        return;
+      }
 
-    const formatted = formatCommitMessage(current, sortedMappings);
-    if (formatted !== current) {
-      setActiveCommitMessage(formatted);
-    }
-  });
-
-  context.subscriptions.push(disposable);
+      const formatted = formatCommitMessage(current, sortedMappings);
+      if (formatted !== current) {
+        await setActiveCommitMessage(formatted);
+      }
+    })
+  );
 }
 
 export function activate(context: vscode.ExtensionContext): void {
