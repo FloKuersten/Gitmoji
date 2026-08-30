@@ -1,7 +1,9 @@
 # ✨ Auto Gitmoji & Docs
 
+[![CI](https://github.com/FloKuersten/Gitmoji/actions/workflows/ci.yml/badge.svg)](https://github.com/FloKuersten/Gitmoji/actions/workflows/ci.yml)
+[![Security](https://github.com/FloKuersten/Gitmoji/actions/workflows/security.yml/badge.svg)](https://github.com/FloKuersten/Gitmoji/actions/workflows/security.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![GitHub](https://img.shields.io/github/stars/FloKuersten/Gitmoji?style=social)](https://github.com/FloKuersten/Gitmoji)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](extension/LICENSE)
 
 **Auto Gitmoji & Docs** is a free **VS Code** and **Cursor** extension by **[KueTech Digital](https://kuetech.at)**.
 
