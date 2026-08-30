@@ -1,18 +1,31 @@
 import type { GitmojiDictionary, GitmojiMapping } from "./types";
 
-const EMOJI_PREFIX =
-  /^[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2300}-\u{23FF}\u{FE0F}\u{200D}]/u;
+const LEADING_EMOJI = /^\p{Extended_Pictographic}/u;
 
-const CONVENTIONAL_PREFIX = /^(\w+)(\([^)]*\))?!?:\s*/i;
+const CONVENTIONAL_PREFIX = /^([A-Za-z][\w-]*)(\([^)]*\))?!?:\s*/;
 
+const DOCSTRING_KEYWORD_PATTERNS = [
+  /^\*\s*@?([\w-]+)/,
+  /^\/\/+\s*([\w-]+)/,
+  /^#+\s*([\w-]+)/,
+  /^(?:"""|''')\s*([\w-]+)/,
+  /^<!--\s*([\w-]+)/,
+];
+
+/**
+ * Orders mappings so that the longest keyword wins when several entries could
+ * match the same token. Sorting once at load time keeps matching allocation-free.
+ */
 export function loadSortedMappings(
   dictionary: GitmojiDictionary
 ): GitmojiMapping[] {
-  return [...dictionary.mappings].sort((a, b) => {
-    const maxA = Math.max(...a.keywords.map((k) => k.length));
-    const maxB = Math.max(...b.keywords.map((k) => k.length));
-    return maxB - maxA;
-  });
+  return [...dictionary.mappings]
+    .filter((mapping) => mapping.keywords.length > 0 && mapping.gitmoji)
+    .sort((a, b) => {
+      const maxA = Math.max(...a.keywords.map((k) => k.length));
+      const maxB = Math.max(...b.keywords.map((k) => k.length));
+      return maxB - maxA;
+    });
 }
 
 export function hasLeadingGitmoji(text: string): boolean {
@@ -20,7 +33,7 @@ export function hasLeadingGitmoji(text: string): boolean {
   if (!trimmed) {
     return false;
   }
-  return EMOJI_PREFIX.test(trimmed);
+  return LEADING_EMOJI.test(trimmed);
 }
 
 function findMapping(
@@ -47,7 +60,7 @@ export function extractCommitKeyword(message: string): string | null {
     return conventional[1];
   }
 
-  const firstWord = trimmed.split(/\s+/)[0]?.replace(/[!?:]+$/, "");
+  const firstWord = trimmed.split(/\s+/)[0]?.replace(/[!?:,.]+$/, "");
   return firstWord || null;
 }
 
@@ -93,11 +106,16 @@ export function formatDocstringLine(
     return line;
   }
 
-  const keyword =
-    trimmed.match(/^\*\s*@?(\w+)/)?.[1] ??
-    trimmed.match(/^\/\/\s*(\w+)/)?.[1] ??
-    trimmed.match(/^#\s*(\w+)/)?.[1] ??
-    trimmed.split(/\s+/)[0]?.replace(/[!?:]+$/, "");
+  let keyword: string | undefined;
+  for (const pattern of DOCSTRING_KEYWORD_PATTERNS) {
+    const match = trimmed.match(pattern);
+    if (match) {
+      keyword = match[1];
+      break;
+    }
+  }
+
+  keyword ??= trimmed.split(/\s+/)[0]?.replace(/[!?:,.]+$/, "");
 
   if (!keyword) {
     return line;
@@ -112,20 +130,27 @@ export function formatDocstringLine(
   return `${leading}${mapping.gitmoji} ${trimmed}`;
 }
 
+/**
+ * Formats the summary (first non-empty) line of a comment or docstring block,
+ * preserving the block's original line endings so Windows files keep CRLF.
+ */
 export function formatDocstringBlock(
   text: string,
   mappings: GitmojiMapping[]
 ): string {
+  const eol = text.includes("\r\n") ? "\r\n" : "\n";
   const lines = text.split(/\r?\n/);
-  if (lines.length === 0) {
-    return text;
-  }
 
-  const summaryIndex = lines.findIndex((l) => l.trim().length > 0);
+  const summaryIndex = lines.findIndex((line) => line.trim().length > 0);
   if (summaryIndex === -1) {
     return text;
   }
 
-  lines[summaryIndex] = formatDocstringLine(lines[summaryIndex], mappings);
-  return lines.join("\n");
+  const formatted = formatDocstringLine(lines[summaryIndex], mappings);
+  if (formatted === lines[summaryIndex]) {
+    return text;
+  }
+
+  lines[summaryIndex] = formatted;
+  return lines.join(eol);
 }

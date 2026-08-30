@@ -1,3 +1,5 @@
+import type { Uri } from "vscode";
+
 export interface GitmojiMapping {
   keywords: string[];
   gitmoji: string;
@@ -14,6 +16,7 @@ export interface GitAPI {
 }
 
 export interface GitRepository {
+  rootUri: Uri;
   inputBox: {
     value: string;
   };
@@ -22,3 +25,5 @@ export interface GitRepository {
 export interface GitExtension {
   getAPI(version: 1): GitAPI;
 }
+
+export type GitmojiPosition = "prefix" | "after-type";
