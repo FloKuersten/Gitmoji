@@ -9,13 +9,24 @@ const EMOJI_PREFIX = /^(?:\p{Extended_Pictographic}|[0-9#*]\uFE0F?\u20E3)/u;
 
 const CONVENTIONAL_PREFIX = /^(\w+)(\([^)]*\))?(!)?:\s*/;
 
-const DOCSTRING_KEYWORD_PATTERNS = [
-  /^\*\s*@?(\w+)/,
-  /^\/\/+\s*(\w+)/,
-  /^#+\s*(\w+)/,
-  /^(?:"""|''')\s*(\w+)/,
-  /^--\s*(\w+)/,
+/**
+ * Comment openers recognized on a summary line. The emoji is inserted after the
+ * marker so it stays inside the comment instead of breaking the surrounding
+ * code, and the list is ordered so longer openers win over their prefixes.
+ */
+const DOCSTRING_MARKERS = [
+  /^\/\*+\s*/,
+  /^\/{2,}\s*/,
+  /^<!--\s*/,
+  /^(?:"""|''')\s*/,
+  /^\*\s*/,
+  /^#+\s*/,
+  /^--\s*/,
+  /^;+\s*/,
+  /^%\s*/,
 ];
+
+const DOCSTRING_KEYWORD = /^@?([A-Za-z_][\w-]*)/;
 
 export function loadSortedMappings(
   dictionary: GitmojiDictionary
@@ -118,26 +129,34 @@ export function formatCommitMessage(
   return applyPosition(trimmed, mapping.gitmoji, position);
 }
 
+function splitCommentMarker(text: string): { marker: string; body: string } {
+  for (const pattern of DOCSTRING_MARKERS) {
+    const match = text.match(pattern);
+    if (match) {
+      return { marker: match[0], body: text.slice(match[0].length) };
+    }
+  }
+
+  return { marker: "", body: text };
+}
+
 export function formatDocstringLine(
   line: string,
   mappings: GitmojiMapping[]
 ): string {
   const trimmed = line.trimStart();
-  if (!trimmed || hasLeadingGitmoji(trimmed)) {
+  if (!trimmed) {
     return line;
   }
 
-  let keyword: string | undefined;
-  for (const pattern of DOCSTRING_KEYWORD_PATTERNS) {
-    const match = trimmed.match(pattern);
-    if (match?.[1]) {
-      keyword = match[1];
-      break;
-    }
+  const indent = line.slice(0, line.length - trimmed.length);
+  const { marker, body } = splitCommentMarker(trimmed);
+
+  if (!body || hasLeadingGitmoji(body)) {
+    return line;
   }
 
-  keyword ??= trimmed.split(/\s+/)[0]?.replace(/[!?:,.]+$/, "");
-
+  const keyword = body.match(DOCSTRING_KEYWORD)?.[1];
   if (!keyword) {
     return line;
   }
@@ -147,8 +166,7 @@ export function formatDocstringLine(
     return line;
   }
 
-  const leading = line.slice(0, line.length - trimmed.length);
-  return `${leading}${mapping.gitmoji} ${trimmed}`;
+  return `${indent}${marker}${mapping.gitmoji} ${body}`;
 }
 
 /**

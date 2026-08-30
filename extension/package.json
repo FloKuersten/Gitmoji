@@ -110,7 +110,11 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
+    "typecheck": "tsc -p ./tsconfig.test.json",
     "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "package": "vsce package --no-dependencies"
   },
   "devDependencies": {
@@ -118,8 +122,9 @@
     "@types/vscode": "^1.85.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
+    "@vscode/vsce": "^2.22.0",
     "eslint": "^8.56.0",
     "typescript": "^5.3.3",
-    "@vscode/vsce": "^2.22.0"
+    "vitest": "^4.1.11"
   }
 }
