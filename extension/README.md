@@ -22,7 +22,9 @@ Insert [Gitmojis](https://gitmoji.dev) into **Git commit messages** and **docstr
 
 | Feature | Emoji | Description |
 |---------|-------|-------------|
-| **Offline matching** | 📋 | `data/gitmoji-map.json` + regex — `fix` → 🐛, `feat` → ✨, `docs` → 📚 |
+| **Offline matching** | 📋 | 63 built-in groups in `data/gitmoji-map.json` + regex — `fix` → 🐛, `feat` → ✨, `docs` → 📚 |
+| **Custom mappings** | 🧩 | Override or extend the dictionary from your settings |
+| **Status bar hint** | 👀 | See the emoji before applying it; click to insert |
 | **Format commit** | 💬 | Git SCM input box — one command |
 | **Format docstring** | 📝 | First line of selection or current line |
 | **Quick-pick** | 🎨 | Choose any Gitmoji from the full dictionary |
@@ -56,14 +58,19 @@ Insert [Gitmojis](https://gitmoji.dev) into **Git commit messages** and **docstr
 
 ## ⌨️ Commands
 
-| Command | What it does |
-|---------|----------------|
-| `Auto Gitmoji: Format Commit Message` | 💬 Add Gitmoji to Git commit box |
-| `Auto Gitmoji: Format Docstring / Comment` | 📝 Add Gitmoji to comment/doc line |
-| `Auto Gitmoji: Pick and Insert Gitmoji` | 🎨 Choose emoji from list |
-| `Auto Gitmoji: Support the Developer` | ☕ KueTech Digital support webview |
+| Command | Shortcut | What it does |
+|---------|----------|----------------|
+| `Auto Gitmoji: Format Commit Message` | `Ctrl+Alt+G` | 💬 Add Gitmoji to Git commit box |
+| `Auto Gitmoji: Pick and Insert Gitmoji` | `Ctrl+Alt+M` | 🎨 Choose emoji from list |
+| `Auto Gitmoji: Format Docstring / Comment` | — | 📝 Add Gitmoji to comment/doc line |
+| `Auto Gitmoji: Open Dictionary` | — | 📖 Inspect the active mappings |
+| `Auto Gitmoji: Support the Developer` | — | ☕ KueTech Digital support webview |
+
+On macOS use `Cmd` instead of `Ctrl`.
 
 **SCM toolbar:** Git commit icon in the Source Control title bar (when Git is active).
+
+**Status bar:** When your commit message matches a keyword, the emoji appears in the status bar — click it to apply.
 
 ---
 
@@ -88,10 +95,32 @@ Supports **Conventional Commits**: `type(scope): message` and simple `type: mess
 
 | Setting | Default | Description |
 |---------|---------|-------------|
+| `autoGitmoji.customMappings` | `[]` | 🧩 Your own keyword-to-emoji entries |
+| `autoGitmoji.position` | `prefix` | Emoji at the start, or after the commit type |
+| `autoGitmoji.showStatusBar` | `true` | Show the suggested emoji in the status bar |
+| `autoGitmoji.formatOnFocusLoss` | `false` | Format the commit box when the window loses focus |
+| `autoGitmoji.notifyOnMajorUpdates` | `true` | One-time reminder after major updates |
 | `autoGitmoji.buyMeACoffeeUrl` | [buymeacoffee.com/kuetech](https://www.buymeacoffee.com/kuetech) | ☕ Support link |
 | `autoGitmoji.websiteUrl` | [kuetech.at](https://kuetech.at) | 🌐 Company website |
-| `autoGitmoji.autoFormatCommitOnSave` | `false` | Format commit when window loses focus |
-| `autoGitmoji.notifyOnMajorUpdates` | `true` | One-time reminder after major updates |
+
+### 🧩 Custom mappings
+
+Add your own keywords in `settings.json`. A keyword defined here overrides the bundled entry:
+
+```json
+{
+  "autoGitmoji.customMappings": [
+    {
+      "keywords": ["ship", "launch"],
+      "gitmoji": "🚢",
+      "description": "Ship it"
+    },
+    { "keywords": ["wip"], "gitmoji": "🏗️" }
+  ]
+}
+```
+
+Run **Auto Gitmoji: Open Dictionary** to see the merged result.
 
 ---
 

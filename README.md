@@ -21,10 +21,11 @@ Turn plain commit messages into expressive, standardized Git history — **🚀 
 
 | Problem | How we help |
 |--------|-------------|
-| 😶 Boring commit messages | Auto-insert the right [Gitmoji](https://gitmoji.dev) from keywords |
+| 😶 Boring commit messages | Auto-insert the right [Gitmoji](https://gitmoji.dev) from 63 keyword groups |
 | 🐢 Slow cloud tools | **Zero latency** — everything runs on your machine |
 | 🔐 Privacy concerns | **No code leaves your editor** for matching |
 | 🤖 AI you don't need | **No AI** — predictable dictionary + regex only |
+| 🧩 Missing your keyword | Add your own with `autoGitmoji.customMappings` |
 
 ---
 

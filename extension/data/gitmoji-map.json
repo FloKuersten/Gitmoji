@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "mappings": [
     {
       "keywords": ["feat", "feature", "add", "new"],
@@ -32,12 +32,12 @@
       "description": "Improve performance"
     },
     {
-      "keywords": ["test", "tests", "testing", "spec", "coverage"],
+      "keywords": ["test", "tests", "testing", "spec", "coverage", "e2e", "unit"],
       "gitmoji": "🧪",
       "description": "Add or update tests"
     },
     {
-      "keywords": ["build", "ci", "cd", "pipeline", "workflow"],
+      "keywords": ["build", "ci", "cd", "pipeline", "workflow", "actions", "gha"],
       "gitmoji": "👷",
       "description": "Add or update CI build system"
     },
@@ -52,7 +52,7 @@
       "description": "Revert changes"
     },
     {
-      "keywords": ["security", "secure", "vuln", "cve"],
+      "keywords": ["security", "secure", "vuln", "cve", "secret", "secrets", "credential"],
       "gitmoji": "🔒",
       "description": "Security improvements"
     },
@@ -77,17 +77,17 @@
       "description": "Move or rename"
     },
     {
-      "keywords": ["ui", "ux", "design", "css", "layout"],
+      "keywords": ["ui", "ux", "design", "css", "layout", "theme", "styling"],
       "gitmoji": "💄",
       "description": "UI / style updates"
     },
     {
-      "keywords": ["i18n", "l10n", "locale", "translation"],
+      "keywords": ["i18n", "l10n", "locale", "translation", "translations"],
       "gitmoji": "🌐",
       "description": "Internationalization"
     },
     {
-      "keywords": ["config", "settings", "env"],
+      "keywords": ["config", "settings", "env", "environment", "dotenv"],
       "gitmoji": "🔧",
       "description": "Configuration changes"
     },
@@ -127,9 +127,9 @@
       "description": "Accessibility"
     },
     {
-      "keywords": ["analytics", "tracking"],
+      "keywords": ["analytics", "tracking", "metrics", "monitor", "monitoring"],
       "gitmoji": "📈",
-      "description": "Analytics"
+      "description": "Analytics and monitoring"
     },
     {
       "keywords": ["mock", "stub", "fake"],
@@ -145,6 +145,176 @@
       "keywords": ["comment", "todo", "note"],
       "gitmoji": "💡",
       "description": "Comments / ideas"
+    },
+    {
+      "keywords": ["docker", "container", "compose", "dockerfile"],
+      "gitmoji": "🐳",
+      "description": "Docker and containers"
+    },
+    {
+      "keywords": ["k8s", "kubernetes", "helm", "kustomize"],
+      "gitmoji": "☸️",
+      "description": "Kubernetes manifests"
+    },
+    {
+      "keywords": ["types", "typing", "typescript", "dts"],
+      "gitmoji": "🏷️",
+      "description": "Add or update types"
+    },
+    {
+      "keywords": ["assets", "images", "fonts", "icons"],
+      "gitmoji": "🍱",
+      "description": "Add or update assets"
+    },
+    {
+      "keywords": ["license", "licensing", "copyright"],
+      "gitmoji": "📄",
+      "description": "Add or update the license"
+    },
+    {
+      "keywords": ["seo", "metadata", "meta"],
+      "gitmoji": "🔍",
+      "description": "SEO and metadata"
+    },
+    {
+      "keywords": ["snapshot", "snapshots"],
+      "gitmoji": "📸",
+      "description": "Add or update snapshots"
+    },
+    {
+      "keywords": ["install", "add-dep", "deps-add"],
+      "gitmoji": "➕",
+      "description": "Add a dependency"
+    },
+    {
+      "keywords": ["uninstall", "remove-dep", "deps-remove"],
+      "gitmoji": "➖",
+      "description": "Remove a dependency"
+    },
+    {
+      "keywords": ["deps-up", "update-deps", "dependabot"],
+      "gitmoji": "⬆️",
+      "description": "Upgrade dependencies"
+    },
+    {
+      "keywords": ["deps-down", "downgrade"],
+      "gitmoji": "⬇️",
+      "description": "Downgrade dependencies"
+    },
+    {
+      "keywords": ["pin", "pinned", "lock", "lockfile"],
+      "gitmoji": "📌",
+      "description": "Pin dependencies to specific versions"
+    },
+    {
+      "keywords": ["infra", "infrastructure", "terraform", "architecture"],
+      "gitmoji": "🏗️",
+      "description": "Architectural changes"
+    },
+    {
+      "keywords": ["script", "scripts", "tooling", "makefile"],
+      "gitmoji": "🔨",
+      "description": "Add or update development scripts"
+    },
+    {
+      "keywords": ["healthcheck", "health"],
+      "gitmoji": "🩺",
+      "description": "Add or update a health check"
+    },
+    {
+      "keywords": ["responsive", "mobile"],
+      "gitmoji": "📱",
+      "description": "Responsive design"
+    },
+    {
+      "keywords": ["text", "copy", "wording", "literals"],
+      "gitmoji": "💬",
+      "description": "Add or update text and literals"
+    },
+    {
+      "keywords": ["validation", "validate"],
+      "gitmoji": "🦺",
+      "description": "Add or update validation"
+    },
+    {
+      "keywords": ["auth", "authentication", "authorization", "permissions", "roles"],
+      "gitmoji": "🛂",
+      "description": "Authorization, roles, and permissions"
+    },
+    {
+      "keywords": ["concurrency", "thread", "threading", "async"],
+      "gitmoji": "🧵",
+      "description": "Multithreading or concurrency"
+    },
+    {
+      "keywords": ["error", "errors", "exception", "catch"],
+      "gitmoji": "🥅",
+      "description": "Catch errors"
+    },
+    {
+      "keywords": ["animation", "animations", "transition"],
+      "gitmoji": "💫",
+      "description": "Add or update animations"
+    },
+    {
+      "keywords": ["deadcode", "dead-code", "deprecate", "deprecated"],
+      "gitmoji": "⚰️",
+      "description": "Remove dead code"
+    },
+    {
+      "keywords": ["experiment", "experimental", "poc"],
+      "gitmoji": "⚗️",
+      "description": "Perform experiments"
+    },
+    {
+      "keywords": ["typo", "typos", "spelling"],
+      "gitmoji": "✏️",
+      "description": "Fix typos"
+    },
+    {
+      "keywords": ["business", "logic", "rules"],
+      "gitmoji": "👔",
+      "description": "Add or update business logic"
+    },
+    {
+      "keywords": ["offline", "pwa", "service-worker"],
+      "gitmoji": "✈️",
+      "description": "Improve offline support"
+    },
+    {
+      "keywords": ["flag", "flags", "feature-flag", "toggle"],
+      "gitmoji": "🚩",
+      "description": "Add, update, or remove feature flags"
+    },
+    {
+      "keywords": ["gitignore", "ignore"],
+      "gitmoji": "🙈",
+      "description": "Add or update a .gitignore file"
+    },
+    {
+      "keywords": ["contributor", "contributors", "authors"],
+      "gitmoji": "👥",
+      "description": "Add or update contributors"
+    },
+    {
+      "keywords": ["sponsor", "funding", "donation", "donate"],
+      "gitmoji": "💸",
+      "description": "Add sponsorships or money-related infrastructure"
+    },
+    {
+      "keywords": ["api", "endpoint", "integration"],
+      "gitmoji": "🔌",
+      "description": "API and integration changes"
+    },
+    {
+      "keywords": ["cache", "caching", "storage", "persist"],
+      "gitmoji": "💾",
+      "description": "Caching and persistence"
+    },
+    {
+      "keywords": ["keybinding", "keybindings", "shortcut", "shortcuts"],
+      "gitmoji": "⌨️",
+      "description": "Keyboard shortcuts"
     }
   ]
 }

@@ -9,13 +9,54 @@ import {
   getActiveCommitMessage,
   setActiveCommitMessage,
 } from "./scmIntegration";
+import { CommitStatusBar } from "./statusBar";
 import { registerSupportCommand, SupportPanel } from "./supportPanel";
-import type { GitmojiMapping } from "./types";
+import type { GitmojiMapping, GitmojiPosition } from "./types";
 
 const WELCOME_KEY = "autoGitmoji.welcomeShown";
 const LAST_VERSION_KEY = "autoGitmoji.lastSeenVersion";
+const LEGACY_FOCUS_LOSS_KEY = "autoFormatCommitOnSave";
 
 let sortedMappings: GitmojiMapping[] = mergeMappings(getBuiltInMappings(), []);
+
+function getMappings(): GitmojiMapping[] {
+  return sortedMappings;
+}
+
+function getPosition(): GitmojiPosition {
+  const configured = vscode.workspace
+    .getConfiguration("autoGitmoji")
+    .get<string>("position", "prefix");
+
+  return configured === "after-type" ? "after-type" : "prefix";
+}
+
+function readExplicitBoolean(
+  config: vscode.WorkspaceConfiguration,
+  key: string
+): boolean | undefined {
+  const inspected = config.inspect<boolean>(key);
+  const explicit =
+    inspected?.workspaceFolderValue ??
+    inspected?.workspaceValue ??
+    inspected?.globalValue;
+
+  return typeof explicit === "boolean" ? explicit : undefined;
+}
+
+/**
+ * Honours the deprecated `autoFormatCommitOnSave` key so existing users keep
+ * their behaviour until they move to `formatOnFocusLoss`.
+ */
+function shouldFormatOnFocusLoss(): boolean {
+  const config = vscode.workspace.getConfiguration("autoGitmoji");
+
+  return (
+    readExplicitBoolean(config, "formatOnFocusLoss") ??
+    readExplicitBoolean(config, LEGACY_FOCUS_LOSS_KEY) ??
+    false
+  );
+}
 
 /**
  * Rebuilds the active dictionary from the bundled data plus any user-defined
@@ -100,7 +141,10 @@ async function showMajorUpdateReminderIfNeeded(
   }
 }
 
-function registerFormatCommitCommand(context: vscode.ExtensionContext): void {
+function registerFormatCommitCommand(
+  context: vscode.ExtensionContext,
+  statusBar: CommitStatusBar
+): void {
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "autoGitmoji.formatCommitMessage",
@@ -113,7 +157,11 @@ function registerFormatCommitCommand(context: vscode.ExtensionContext): void {
           return;
         }
 
-        const formatted = formatCommitMessage(current, sortedMappings);
+        const formatted = formatCommitMessage(
+          current,
+          sortedMappings,
+          getPosition()
+        );
         if (formatted === current) {
           vscode.window.showInformationMessage(
             "No matching keyword found, or a Gitmoji is already present."
@@ -127,6 +175,8 @@ function registerFormatCommitCommand(context: vscode.ExtensionContext): void {
           );
           return;
         }
+
+        statusBar.refresh();
       }
     )
   );
@@ -175,7 +225,10 @@ function registerFormatDocstringCommand(
   );
 }
 
-function registerInsertPickerCommand(context: vscode.ExtensionContext): void {
+function registerInsertPickerCommand(
+  context: vscode.ExtensionContext,
+  statusBar: CommitStatusBar
+): void {
   context.subscriptions.push(
     vscode.commands.registerCommand("autoGitmoji.insertGitmoji", async () => {
       const items = sortedMappings.map((m) => ({
@@ -205,7 +258,31 @@ function registerInsertPickerCommand(context: vscode.ExtensionContext): void {
       const current = await getActiveCommitMessage();
       if (current !== undefined) {
         await setActiveCommitMessage(`${picked.gitmoji} ${current}`.trim());
+        statusBar.refresh();
       }
+    })
+  );
+}
+
+function registerOpenDictionaryCommand(context: vscode.ExtensionContext): void {
+  context.subscriptions.push(
+    vscode.commands.registerCommand("autoGitmoji.openDictionary", async () => {
+      const content = JSON.stringify(
+        {
+          note: "Active mappings: bundled dictionary merged with autoGitmoji.customMappings. Edit the setting to override an entry.",
+          count: sortedMappings.length,
+          mappings: sortedMappings,
+        },
+        null,
+        2
+      );
+
+      const document = await vscode.workspace.openTextDocument({
+        content,
+        language: "json",
+      });
+
+      await vscode.window.showTextDocument(document, { preview: true });
     })
   );
 }
@@ -213,12 +290,7 @@ function registerInsertPickerCommand(context: vscode.ExtensionContext): void {
 function registerAutoFormatOnBlur(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.window.onDidChangeWindowState(async (state) => {
-      if (state.focused) {
-        return;
-      }
-
-      const config = vscode.workspace.getConfiguration("autoGitmoji");
-      if (!config.get<boolean>("autoFormatCommitOnSave", false)) {
+      if (state.focused || !shouldFormatOnFocusLoss()) {
         return;
       }
 
@@ -227,7 +299,11 @@ function registerAutoFormatOnBlur(context: vscode.ExtensionContext): void {
         return;
       }
 
-      const formatted = formatCommitMessage(current, sortedMappings);
+      const formatted = formatCommitMessage(
+        current,
+        sortedMappings,
+        getPosition()
+      );
       if (formatted !== current) {
         await setActiveCommitMessage(formatted);
       }
@@ -238,18 +314,28 @@ function registerAutoFormatOnBlur(context: vscode.ExtensionContext): void {
 export function activate(context: vscode.ExtensionContext): void {
   loadDictionary();
 
+  const statusBar = new CommitStatusBar(getMappings);
+  context.subscriptions.push(statusBar);
+  statusBar.start();
+
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration((event) => {
       if (event.affectsConfiguration("autoGitmoji.customMappings")) {
         loadDictionary();
+        statusBar.refresh();
+      }
+
+      if (event.affectsConfiguration("autoGitmoji.showStatusBar")) {
+        statusBar.applyEnabledState();
       }
     })
   );
 
   registerSupportCommand(context);
-  registerFormatCommitCommand(context);
+  registerFormatCommitCommand(context, statusBar);
   registerFormatDocstringCommand(context);
-  registerInsertPickerCommand(context);
+  registerInsertPickerCommand(context, statusBar);
+  registerOpenDictionaryCommand(context);
   registerAutoFormatOnBlur(context);
 
   void showWelcomeIfNeeded(context);

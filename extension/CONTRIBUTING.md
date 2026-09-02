@@ -8,6 +8,8 @@ All mappings live in a single file:
 
 `extension/data/gitmoji-map.json`
 
+Before proposing a change to the defaults, note that you can already add your own entries locally with the `autoGitmoji.customMappings` setting. Pull requests to the bundled dictionary are for keywords that most developers would benefit from.
+
 ### Format
 
 Each entry in `mappings` must include:
@@ -15,7 +17,7 @@ Each entry in `mappings` must include:
 | Field | Required | Description |
 |-------|----------|-------------|
 | `keywords` | Yes | Lowercase words matched against the first token of a commit message or docstring summary (e.g. `fix`, `docs`, `feat`). |
-| `gitmoji` | Yes | A single Unicode emoji inserted at the start of the line. |
+| `gitmoji` | Yes | A single Unicode emoji inserted into the line. |
 | `description` | No | Shown in the Gitmoji picker and useful for reviewers. |
 
 Example:
@@ -30,35 +32,54 @@ Example:
 
 ### Matching rules
 
-1. **Commit messages** — The matcher reads the conventional-commit type (`fix: …`, `feat(scope): …`) or the first word before a space.
-2. **Docstrings** — The first non-empty line of the selection is treated as the summary line.
-3. **No duplicate emoji** — If the line already starts with an emoji, nothing is inserted.
-4. **Longest keyword wins** — When multiple entries could match, longer keywords take priority (sorted automatically in code).
+1. **Commit messages** — The matcher reads the conventional-commit type (`fix: …`, `feat(scope): …`, `feat!: …`) or the first word before a space.
+2. **Docstrings** — The first non-empty line of the selection is the summary line. The emoji is inserted after the comment marker, so `// fix parser` becomes `// 🐛 fix parser`.
+3. **No duplicate emoji** — If the line's content already starts with an emoji, nothing is inserted.
+4. **Longest keyword wins** — When multiple entries could match, the entry with the longest keyword takes priority (sorted automatically in code).
+5. **User mappings win** — Entries from `autoGitmoji.customMappings` override bundled entries for the same keyword.
 
 ### Pull request checklist
 
 - [ ] New keywords are lowercase and commonly used in commit messages.
 - [ ] The Gitmoji matches the [gitmoji.dev](https://gitmoji.dev) convention when applicable.
-- [ ] No duplicate keyword across entries (avoid ambiguous matches).
-- [ ] Run `npm run compile` in `extension/` with zero TypeScript errors.
-- [ ] Manually test: `Auto Gitmoji: Format Commit Message` and `Format Docstring`.
+- [ ] No duplicate keyword across entries (`npm test` enforces this).
+- [ ] `npm run lint`, `npm run typecheck`, and `npm test` all pass.
+- [ ] Manually tested: `Auto Gitmoji: Format Commit Message` and `Format Docstring / Comment`.
 
 ## Development setup
 
 ```bash
 cd extension
 npm install
-npm run compile
+npm run build
 ```
 
-Press **F5** in VS Code to launch the Extension Development Host.
+Press **F5** in VS Code or Cursor to launch the Extension Development Host. Use `npm run watch` for incremental rebuilds.
+
+### Useful scripts
+
+| Script | Purpose |
+|--------|---------|
+| `npm run build` | Production bundle with esbuild |
+| `npm run watch` | Rebuild on change |
+| `npm run lint` | ESLint |
+| `npm run format` | Apply Prettier |
+| `npm run typecheck` | TypeScript, including tests |
+| `npm test` | Vitest unit tests |
+| `npm run test:watch` | Vitest in watch mode |
+| `npm run package` | Build the `.vsix` |
+
+## Testing
+
+Matching logic lives in pure functions in [src/gitmojiMatcher.ts](src/gitmojiMatcher.ts) and [src/dictionary.ts](src/dictionary.ts), so it is unit tested without a VS Code host. Any change to matching behaviour needs a test in [src/\_\_tests\_\_](src/__tests__).
 
 ## Code style
 
 - TypeScript strict mode is enabled.
-- Run `npm run lint` before opening a PR.
-- Keep the extension **offline**: no network calls in core logic.
+- Prettier and ESLint are enforced in CI; run `npm run format` before opening a PR.
+- Keep the extension **offline**: no network calls, no AI, and no telemetry in the matching path.
+- Comments explain constraints, not what the next line does.
 
 ## Questions
 
-Open a GitHub issue with the `question` label if matching behavior should change — that affects all users.
+Open a GitHub issue if matching behaviour should change — that affects all users.
