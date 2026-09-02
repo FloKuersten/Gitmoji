@@ -15,6 +15,10 @@ jobs:
   analyze:
     name: Analyze JavaScript/TypeScript
     runs-on: ubuntu-latest
+    # Code scanning uploads require a public repository or GitHub Advanced
+    # Security. Skipping keeps the run green while the repository is private,
+    # and the job starts working automatically once it goes public.
+    if: ${{ !github.event.repository.private }}
     permissions:
       actions: read
       contents: read
