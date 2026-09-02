@@ -1,69 +1,98 @@
-# 🔒 Security Policy — Auto Gitmoji & Docs
+# Security Policy — Auto Gitmoji & Docs
 
 **Maintainer:** [KueTech Digital](https://kuetech.at)  
 **Repository:** [github.com/FloKuersten/Gitmoji](https://github.com/FloKuersten/Gitmoji)
 
-## 🎯 Scope
+## Reporting a vulnerability
 
-This policy covers the **Auto Gitmoji & Docs** VS Code / Cursor extension in `/extension`.
+Please report security issues **privately** through GitHub's private vulnerability reporting:
 
-## ✅ Security model (summary)
+**[Report a vulnerability](https://github.com/FloKuersten/Gitmoji/security/advisories/new)**
+
+Do not open a public issue for a security report. If GitHub reporting is unavailable to you, contact us through [kuetech.at](https://kuetech.at) instead.
+
+Please include:
+
+- A description of the issue and its impact
+- Steps to reproduce, ideally with a minimal example
+- The extension version and your editor (VS Code or Cursor) and version
+
+### What to expect
+
+| Stage | Target |
+|-------|--------|
+| Acknowledgement of your report | Within 7 days |
+| Initial assessment and severity triage | Within 14 days |
+| Fix released for confirmed high-severity issues | Within 30 days |
+
+We will keep you updated during triage and credit you in the release notes unless you prefer to stay anonymous.
+
+## Supported versions
+
+Only the latest published release receives security fixes. Please upgrade before reporting an issue against an older build.
+
+## Security model
 
 | Area | Behavior |
 |------|----------|
-| **Core Gitmoji matching** | Fully **offline** — reads `data/gitmoji-map.json` and runs regex in-process |
-| **Source code analysis** | **None** — extension does not read or upload your project files for matching |
-| **AI / LLM** | **Not used** |
-| **Telemetry** | **None** implemented by this extension |
-| **Network** | **Only** when you explicitly open external links (Buy Me a Coffee, kuetech.at) from the Support webview |
-| **Secrets** | **No** API keys, tokens, or credentials in source — only configurable public URLs |
+| Gitmoji matching | Fully **offline** — reads a bundled JSON dictionary and runs regular expressions in-process |
+| Source code analysis | **None** — no project files are read or uploaded for matching |
+| AI / LLM | **Not used** |
+| Telemetry | **None** implemented by this extension |
+| Network access | **Only** when you explicitly open an external link from the Support panel |
+| Runtime dependencies | **Zero** — the packaged extension ships no third-party runtime packages |
+| Secrets | **None** in source; all URLs are public and user-configurable |
 
-## 🛡️ What we do not do
+### What the extension does not do
 
-- ❌ Send commit messages or docstrings to remote servers  
-- ❌ Call third-party APIs for emoji suggestions  
-- ❌ Execute arbitrary remote code  
-- ❌ Store credentials in the repository  
+- Send commit messages or docstrings to remote servers
+- Call third-party APIs for emoji suggestions
+- Execute remote code
+- Store credentials in the repository
 
-## 📦 Dependencies
+### Webview hardening
 
-Dev/build tools (`typescript`, `eslint`, `@vscode/vsce`, etc.) are used **only** when developing or packaging the extension — not at runtime for end users in the packaged `.vsix`.
+The Support panel is a local webview with a restrictive Content Security Policy: no remote scripts, images limited to the extension's own resources and HTTPS, and scripts limited to the extension's own origin. Navigation happens through `vscode.env.openExternal`, so links open in your system browser rather than inside the editor.
 
-Run locally:
+## Automated checks
+
+This repository runs the following on every push and pull request to `main`, plus a weekly schedule:
+
+| Workflow | Purpose |
+|----------|---------|
+| [ci.yml](.github/workflows/ci.yml) | Lint, typecheck, tests on Node 20 and 22, then VSIX packaging |
+| [codeql.yml](.github/workflows/codeql.yml) | CodeQL static analysis with the security-and-quality query suite |
+| [security.yml](.github/workflows/security.yml) | Gitleaks secret scan over full history and `npm audit` |
+| [dependabot.yml](.github/dependabot.yml) | Weekly dependency and GitHub Actions updates |
+
+Production dependency advisories fail the build. Development-tooling advisories are reported without blocking, since build tools do not ship to users.
+
+Run the same checks locally:
 
 ```bash
 cd extension
-npm audit
+npm ci
+npm run lint
+npm run typecheck
+npm test
+npm audit --omit=dev
 ```
 
-Last checked: **0 moderate+ vulnerabilities** (dev dependencies).
+## Public repository contents
 
-## 🌐 External links (user-initiated)
+This repository is intentionally public. The following are published on purpose and are not secrets:
 
-| URL | When opened |
-|-----|-------------|
-| `https://www.buymeacoffee.com/kuetech` | User clicks **Buy Me a Coffee** in Support panel |
-| `https://kuetech.at` | User clicks **KueTech Digital** / website in Support panel |
+- `extension/assets/donate-qr.png` — a Buy Me a Coffee donation QR code
+- `https://kuetech.at` and `https://www.buymeacoffee.com/kuetech` — public links
 
-You can override URLs in VS Code settings (`autoGitmoji.buyMeACoffeeUrl`, `autoGitmoji.websiteUrl`).
+Credentials are never committed. Marketplace publishing uses a Personal Access Token supplied at publish time from the maintainer's machine or from a repository secret, never from a file in the repository. See [.gitignore](.gitignore) for the ignored credential patterns, including `.npmrc`, `.vsce`, `*.pem`, and `*.key`.
 
-## 🐛 Reporting a vulnerability
+## Recommended practices for users
 
-If you find a security issue:
+- Install from the official Marketplace listing or this repository only
+- Review `extension/data/gitmoji-map.json` if you fork the project
+- Keep VS Code or Cursor up to date
 
-1. **Do not** open a public issue for sensitive reports  
-2. Email or contact via [kuetech.at](https://kuetech.at) with:
-   - Description of the issue  
-   - Steps to reproduce  
-   - Impact assessment (if known)  
-3. We aim to respond within **7 business days**
+## License
 
-## 📋 Recommended user practices
-
-- ✅ Install from the [official Marketplace listing](https://marketplace.visualstudio.com/) or this GitHub repo only  
-- ✅ Review `data/gitmoji-map.json` if you fork the project  
-- ✅ Keep VS Code / Cursor updated  
-
-## 📄 License
-
-MIT — see [extension/LICENSE](extension/LICENSE)
+MIT — see [LICENSE](LICENSE)

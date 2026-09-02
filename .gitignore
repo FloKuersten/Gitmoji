@@ -11,14 +11,26 @@ build/
 
 # Environment & secrets
 .env
-.env.local
-.env.*.local
+.env.*
 !.env.example
+*.local
+secrets/
+.npmrc
+.vsce
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.jks
+id_rsa*
+*.gpg
 
 # Logs
 logs/
 *.log
 npm-debug.log*
+yarn-error.log*
 
 # OS & editors
 .DS_Store
@@ -35,9 +47,8 @@ Thumbs.db
 # Test & coverage
 coverage/
 .nyc_output/
-
-# Docker local overrides
-docker-compose.override.yml
+.vscode-test/
+.vscode-test-web/
 
 # Cursor (do not push)
 .cursor/
