@@ -225,9 +225,7 @@ export class SupportPanel {
   }
 }
 
-export function registerSupportCommand(
-  context: vscode.ExtensionContext
-): void {
+export function registerSupportCommand(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.commands.registerCommand("autoGitmoji.openSupport", () => {
       SupportPanel.createOrShow(context.extensionUri, context);

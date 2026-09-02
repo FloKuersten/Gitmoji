@@ -1,0 +1,83 @@
+name: Bug report
+description: Something in the extension does not work as expected.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Please do not include private repository names or credentials.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: Describe the problem and what you expected instead.
+      placeholder: Running "Format Commit Message" left the message unchanged.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      value: |
+        1. Open the Source Control view
+        2. Type `fix: something`
+        3. Run `Auto Gitmoji: Format Commit Message`
+        4. Observe ...
+    validations:
+      required: true
+
+  - type: input
+    id: commit-message
+    attributes:
+      label: Input text
+      description: The exact commit message or comment line you used, if relevant.
+      placeholder: "fix: crash on save"
+
+  - type: dropdown
+    id: editor
+    attributes:
+      label: Editor
+      options:
+        - VS Code
+        - Cursor
+        - Other (please describe below)
+    validations:
+      required: true
+
+  - type: input
+    id: versions
+    attributes:
+      label: Editor and extension version
+      placeholder: "VS Code 1.96.0, Auto Gitmoji 1.1.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Windows
+        - macOS
+        - Linux
+    validations:
+      required: true
+
+  - type: textarea
+    id: custom-mappings
+    attributes:
+      label: Custom mappings
+      description: Your `autoGitmoji.customMappings` setting, if you use one.
+      render: json
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I am using the latest released version.
+          required: true
+        - label: I searched existing issues for a duplicate.
+          required: true

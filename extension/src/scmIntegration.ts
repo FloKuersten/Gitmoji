@@ -39,7 +39,9 @@ function isPathInside(parent: string, child: string): boolean {
  * Both reads and writes go through this function so a multi-root workspace can
  * never read from one repository and write to another.
  */
-export async function getActiveRepository(): Promise<GitRepository | undefined> {
+export async function getActiveRepository(): Promise<
+  GitRepository | undefined
+> {
   const api = await getGitApi();
   if (!api?.repositories.length) {
     return undefined;

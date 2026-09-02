@@ -1,4 +1,8 @@
-import type { GitmojiDictionary, GitmojiMapping, GitmojiPosition } from "./types";
+import type {
+  GitmojiDictionary,
+  GitmojiMapping,
+  GitmojiPosition,
+} from "./types";
 
 /**
  * Matches any leading emoji, including ranges the previous explicit ranges

@@ -192,7 +192,9 @@ describe("formatDocstringLine", () => {
   });
 
   it("skips a comment whose body already starts with an emoji", () => {
-    expect(formatDocstringLine("// 🐛 fix bug", mappings)).toBe("// 🐛 fix bug");
+    expect(formatDocstringLine("// 🐛 fix bug", mappings)).toBe(
+      "// 🐛 fix bug"
+    );
     expect(formatDocstringLine(" * ✨ feat", mappings)).toBe(" * ✨ feat");
   });
 

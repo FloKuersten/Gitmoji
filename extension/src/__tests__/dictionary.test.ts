@@ -30,7 +30,7 @@ describe("isValidMapping", () => {
     [{ keywords: [""], gitmoji: "🐛" }, "an empty keyword"],
     [{ keywords: [1], gitmoji: "🐛" }, "a non-string keyword"],
     [{ keywords: "fix", gitmoji: "🐛" }, "keywords that are not an array"],
-  ])("rejects %s (%s)", (value) => {
+  ])("rejects %s (%s)", (value, _label) => {
     expect(isValidMapping(value)).toBe(false);
   });
 });

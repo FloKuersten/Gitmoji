@@ -1,0 +1,52 @@
+name: New gitmoji mapping
+description: Propose a keyword-to-emoji entry for the built-in dictionary.
+labels: ["dictionary"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Mappings live in [extension/data/gitmoji-map.json](../../extension/data/gitmoji-map.json).
+        Pull requests are welcome — see [CONTRIBUTING.md](../../extension/CONTRIBUTING.md).
+
+  - type: input
+    id: keywords
+    attributes:
+      label: Keywords
+      description: Lowercase, comma separated. These are matched against the commit type or the first word of a summary line.
+      placeholder: "docker, container"
+    validations:
+      required: true
+
+  - type: input
+    id: emoji
+    attributes:
+      label: Emoji
+      description: A single emoji.
+      placeholder: "🐳"
+    validations:
+      required: true
+
+  - type: input
+    id: description
+    attributes:
+      label: Description
+      description: Short label shown in the Gitmoji picker.
+      placeholder: "Docker and container changes"
+    validations:
+      required: true
+
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Why this belongs in the defaults
+      description: Common usage or a reference to the gitmoji.dev convention.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: These keywords are not already claimed by another entry.
+          required: true
+        - label: I understand I can add this locally today with `autoGitmoji.customMappings`.
+          required: true

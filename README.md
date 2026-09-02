@@ -93,7 +93,9 @@ Gitmoji/
 |------|---------|
 | [extension/README.md](extension/README.md) | 📣 Marketplace listing (long form) |
 | [extension/PUBLISHING.md](extension/PUBLISHING.md) | 🚀 Publish to VS Marketplace |
-| [extension/CONTRIBUTING.md](extension/CONTRIBUTING.md) | 🤝 Add new Gitmoji mappings |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | 🤝 How to contribute |
+| [extension/CONTRIBUTING.md](extension/CONTRIBUTING.md) | 📋 Add new Gitmoji mappings |
+| [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | 💬 Community standards |
 | [SECURITY.md](SECURITY.md) | 🔒 Security & privacy model |
 
 ---

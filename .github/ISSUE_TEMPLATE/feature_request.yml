@@ -1,0 +1,41 @@
+name: Feature request
+description: Suggest a new capability for the extension.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This extension is deliberately offline: no AI, no network calls, no telemetry.
+        Requests that require a remote service will not be accepted.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to do that is awkward today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: How should the extension behave?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Existing settings, commands, or other extensions you tried.
+
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Constraints
+      options:
+        - label: This works fully offline with no external service.
+          required: true
+        - label: To add a keyword-to-emoji mapping, I will use the mapping template instead.
+          required: true

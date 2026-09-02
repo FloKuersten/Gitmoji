@@ -144,6 +144,8 @@
     "watch": "node esbuild.mjs --watch",
     "typecheck": "tsc -p ./tsconfig.test.json",
     "lint": "eslint .",
+    "format": "prettier --write \"src/**/*.ts\" \"*.{json,mjs}\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"*.{json,mjs}\"",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -157,6 +159,7 @@
     "esbuild": "^0.28.2",
     "eslint": "^10.9.1",
     "globals": "^17.12.0",
+    "prettier": "^3.9.6",
     "typescript": "~5.9",
     "typescript-eslint": "^8.69.0",
     "vitest": "^4.1.11"
