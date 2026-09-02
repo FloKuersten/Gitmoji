@@ -1,80 +1,40 @@
-import * as fs from "fs";
-import * as path from "path";
 import * as vscode from "vscode";
 import {
-  formatCommitMessage,
-  formatDocstringBlock,
-  loadSortedMappings,
-} from "./gitmojiMatcher";
+  getBuiltInMappings,
+  isValidMapping,
+  mergeMappings,
+} from "./dictionary";
+import { formatCommitMessage, formatDocstringBlock } from "./gitmojiMatcher";
 import {
   getActiveCommitMessage,
   setActiveCommitMessage,
 } from "./scmIntegration";
 import { registerSupportCommand, SupportPanel } from "./supportPanel";
-import type { GitmojiDictionary, GitmojiMapping } from "./types";
+import type { GitmojiMapping } from "./types";
 
 const WELCOME_KEY = "autoGitmoji.welcomeShown";
 const LAST_VERSION_KEY = "autoGitmoji.lastSeenVersion";
 
+let sortedMappings: GitmojiMapping[] = mergeMappings(getBuiltInMappings(), []);
+
 /**
- * Minimal dictionary used only when the bundled JSON cannot be read or parsed,
- * so a corrupted install degrades instead of failing activation.
+ * Rebuilds the active dictionary from the bundled data plus any user-defined
+ * mappings. Invalid user entries are reported once and skipped so a typo in
+ * settings cannot disable the extension.
  */
-const FALLBACK_MAPPINGS: GitmojiMapping[] = [
-  { keywords: ["feat", "feature", "add"], gitmoji: "✨" },
-  { keywords: ["fix", "bug"], gitmoji: "🐛" },
-  { keywords: ["docs", "doc"], gitmoji: "📚" },
-  { keywords: ["refactor"], gitmoji: "♻️" },
-  { keywords: ["test", "tests"], gitmoji: "🧪" },
-  { keywords: ["chore"], gitmoji: "🔧" },
-];
+function loadDictionary(): void {
+  const configured = vscode.workspace
+    .getConfiguration("autoGitmoji")
+    .get<unknown[]>("customMappings", []);
 
-let sortedMappings: GitmojiMapping[] = loadSortedMappings({
-  version: 1,
-  mappings: FALLBACK_MAPPINGS,
-});
+  const custom = Array.isArray(configured) ? configured : [];
+  const valid = custom.filter(isValidMapping);
+  sortedMappings = mergeMappings(getBuiltInMappings(), valid);
 
-function isValidMapping(value: unknown): value is GitmojiMapping {
-  if (typeof value !== "object" || value === null) {
-    return false;
-  }
-
-  const candidate = value as Partial<GitmojiMapping>;
-  return (
-    typeof candidate.gitmoji === "string" &&
-    candidate.gitmoji.length > 0 &&
-    Array.isArray(candidate.keywords) &&
-    candidate.keywords.length > 0 &&
-    candidate.keywords.every((kw) => typeof kw === "string" && kw.length > 0)
-  );
-}
-
-function loadDictionary(context: vscode.ExtensionContext): void {
-  const dictPath = path.join(context.extensionPath, "data", "gitmoji-map.json");
-
-  try {
-    const raw = fs.readFileSync(dictPath, "utf8");
-    const dictionary = JSON.parse(raw) as GitmojiDictionary;
-    const mappings = Array.isArray(dictionary?.mappings)
-      ? dictionary.mappings.filter(isValidMapping)
-      : [];
-
-    if (mappings.length === 0) {
-      throw new Error("Dictionary contains no valid mappings.");
-    }
-
-    sortedMappings = loadSortedMappings({
-      version: dictionary.version ?? 1,
-      mappings,
-    });
-  } catch (error) {
-    const detail = error instanceof Error ? error.message : String(error);
-    sortedMappings = loadSortedMappings({
-      version: 1,
-      mappings: FALLBACK_MAPPINGS,
-    });
-    vscode.window.showErrorMessage(
-      `Auto Gitmoji: could not load the emoji dictionary (${detail}). Using built-in defaults.`
+  const rejected = custom.length - valid.length;
+  if (rejected > 0) {
+    vscode.window.showWarningMessage(
+      `Auto Gitmoji: ignored ${rejected} invalid entry in autoGitmoji.customMappings. Each entry needs a non-empty "gitmoji" and at least one "keywords" value.`
     );
   }
 }
@@ -276,7 +236,16 @@ function registerAutoFormatOnBlur(context: vscode.ExtensionContext): void {
 }
 
 export function activate(context: vscode.ExtensionContext): void {
-  loadDictionary(context);
+  loadDictionary();
+
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration((event) => {
+      if (event.affectsConfiguration("autoGitmoji.customMappings")) {
+        loadDictionary();
+      }
+    })
+  );
+
   registerSupportCommand(context);
   registerFormatCommitCommand(context);
   registerFormatDocstringCommand(context);

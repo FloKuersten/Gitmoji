@@ -1,15 +1,8 @@
-.vscode/**
-.vscode-test/**
-src/**
-.gitignore
-tsconfig.json
-eslint.config.js
-**/*.map
-**/*.ts
-node_modules/**
-!node_modules/**/LICENSE
-!out/**
-CONTRIBUTING.md
-!assets/**
-!data/**
-!media/**
+# Everything is excluded by default except the bundle and runtime assets.
+**
+!dist/extension.js
+!assets/donate-qr.png
+!media/icon.png
+!README.md
+!CHANGELOG.md
+!LICENSE

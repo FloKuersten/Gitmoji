@@ -40,7 +40,7 @@
   "activationEvents": [
     "onStartupFinished"
   ],
-  "main": "./out/extension.js",
+  "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
@@ -83,6 +83,37 @@
     "configuration": {
       "title": "Auto Gitmoji & Docs (KueTech Digital)",
       "properties": {
+        "autoGitmoji.customMappings": {
+          "type": "array",
+          "default": [],
+          "markdownDescription": "Extra keyword-to-emoji mappings, merged over the built-in dictionary. A keyword defined here overrides the bundled entry for that keyword.",
+          "items": {
+            "type": "object",
+            "required": [
+              "keywords",
+              "gitmoji"
+            ],
+            "properties": {
+              "keywords": {
+                "type": "array",
+                "description": "Keywords matched against the commit type or the first word of the summary line.",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1
+              },
+              "gitmoji": {
+                "type": "string",
+                "description": "Emoji inserted when a keyword matches."
+              },
+              "description": {
+                "type": "string",
+                "description": "Optional label shown in the Gitmoji picker."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
         "autoGitmoji.buyMeACoffeeUrl": {
           "type": "string",
           "default": "https://www.buymeacoffee.com/kuetech",
@@ -107,9 +138,10 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run build",
+    "build": "node esbuild.mjs --production",
+    "compile": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
     "typecheck": "tsc -p ./tsconfig.test.json",
     "lint": "eslint .",
     "test": "vitest run",
@@ -122,7 +154,9 @@
     "@types/node": "^20.11.0",
     "@types/vscode": "^1.85.0",
     "@vscode/vsce": "^3.9.2",
+    "esbuild": "^0.28.2",
     "eslint": "^10.9.1",
+    "globals": "^17.12.0",
     "typescript": "~5.9",
     "typescript-eslint": "^8.69.0",
     "vitest": "^4.1.11"

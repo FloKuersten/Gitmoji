@@ -1,6 +1,6 @@
 # ✨ Auto Gitmoji & Docs
 
-![KueTech Digital](media/logo.png)
+![KueTech Digital](media/icon.png)
 
 <p align="center">
   <strong>A <a href="https://kuetech.at">KueTech Digital</a> product</strong><br/>
