@@ -1,6 +1,7 @@
 import type {
   GitmojiDictionary,
   GitmojiMapping,
+  GitmojiOutputFormat,
   GitmojiPosition,
 } from "./types";
 
@@ -10,6 +11,9 @@ import type {
  * ASCII character, so they need a separate alternative.
  */
 const EMOJI_PREFIX = /^(?:\p{Extended_Pictographic}|[0-9#*]\uFE0F?\u20E3)/u;
+
+/** Official shortcode already at the start of the message, e.g. `:bug: fix`. */
+const CODE_PREFIX = /^:[a-z0-9_+-]+:/i;
 
 const CONVENTIONAL_PREFIX = /^(\w+)(\([^)]*\))?(!)?:\s*/;
 
@@ -47,16 +51,41 @@ export function hasLeadingGitmoji(text: string): boolean {
   if (!trimmed) {
     return false;
   }
-  return EMOJI_PREFIX.test(trimmed);
+  return EMOJI_PREFIX.test(trimmed) || CODE_PREFIX.test(trimmed);
+}
+
+/**
+ * Returns the token that should be written into a commit message for a mapping,
+ * honouring the user's emoji vs shortcode preference.
+ */
+export function formatToken(
+  mapping: GitmojiMapping,
+  outputFormat: GitmojiOutputFormat = "emoji"
+): string {
+  if (outputFormat === "code") {
+    if (mapping.code?.trim()) {
+      return mapping.code.trim();
+    }
+    if (mapping.name?.trim()) {
+      return `:${mapping.name.trim()}:`;
+    }
+  }
+  return mapping.gitmoji;
 }
 
 function findMapping(
   token: string,
   mappings: GitmojiMapping[]
 ): GitmojiMapping | undefined {
-  const lower = token.toLowerCase();
+  const lower = token.toLowerCase().replace(/^:|:$/g, "");
   for (const mapping of mappings) {
     if (mapping.keywords.some((kw) => kw.toLowerCase() === lower)) {
+      return mapping;
+    }
+    if (mapping.name?.toLowerCase() === lower) {
+      return mapping;
+    }
+    if (mapping.code?.toLowerCase().replace(/^:|:$/g, "") === lower) {
       return mapping;
     }
   }
@@ -101,24 +130,25 @@ export function matchGitmoji(
  */
 function applyPosition(
   message: string,
-  gitmoji: string,
+  token: string,
   position: GitmojiPosition
 ): string {
   if (position === "after-type") {
     const conventional = message.match(CONVENTIONAL_PREFIX);
     if (conventional) {
       const prefix = conventional[0];
-      return `${prefix}${gitmoji} ${message.slice(prefix.length)}`;
+      return `${prefix}${token} ${message.slice(prefix.length)}`;
     }
   }
 
-  return `${gitmoji} ${message}`;
+  return `${token} ${message}`;
 }
 
 export function formatCommitMessage(
   message: string,
   mappings: GitmojiMapping[],
-  position: GitmojiPosition = "prefix"
+  position: GitmojiPosition = "prefix",
+  outputFormat: GitmojiOutputFormat = "emoji"
 ): string {
   const trimmed = message.trim();
   if (!trimmed || hasLeadingGitmoji(trimmed)) {
@@ -130,7 +160,11 @@ export function formatCommitMessage(
     return message;
   }
 
-  return applyPosition(trimmed, mapping.gitmoji, position);
+  return applyPosition(
+    trimmed,
+    formatToken(mapping, outputFormat),
+    position
+  );
 }
 
 function splitCommentMarker(text: string): { marker: string; body: string } {
@@ -146,7 +180,8 @@ function splitCommentMarker(text: string): { marker: string; body: string } {
 
 export function formatDocstringLine(
   line: string,
-  mappings: GitmojiMapping[]
+  mappings: GitmojiMapping[],
+  outputFormat: GitmojiOutputFormat = "emoji"
 ): string {
   const trimmed = line.trimStart();
   if (!trimmed) {
@@ -170,7 +205,7 @@ export function formatDocstringLine(
     return line;
   }
 
-  return `${indent}${marker}${mapping.gitmoji} ${body}`;
+  return `${indent}${marker}${formatToken(mapping, outputFormat)} ${body}`;
 }
 
 /**
@@ -179,7 +214,8 @@ export function formatDocstringLine(
  */
 export function formatDocstringBlock(
   text: string,
-  mappings: GitmojiMapping[]
+  mappings: GitmojiMapping[],
+  outputFormat: GitmojiOutputFormat = "emoji"
 ): string {
   const eol = text.includes("\r\n") ? "\r\n" : "\n";
   const lines = text.split(/\r?\n/);
@@ -189,6 +225,39 @@ export function formatDocstringBlock(
     return text;
   }
 
-  lines[summaryIndex] = formatDocstringLine(lines[summaryIndex], mappings);
+  lines[summaryIndex] = formatDocstringLine(
+    lines[summaryIndex],
+    mappings,
+    outputFormat
+  );
   return lines.join(eol);
+}
+
+/**
+ * Finds mappings whose keywords, name, or shortcode match a typed filter
+ * (without surrounding colons). Used by SCM colon completion.
+ */
+export function filterMappingsForCompletion(
+  filter: string,
+  mappings: GitmojiMapping[]
+): GitmojiMapping[] {
+  const needle = filter.toLowerCase().replace(/^:|:$/g, "");
+  if (!needle) {
+    return mappings;
+  }
+
+  return mappings.filter((mapping) => {
+    if (mapping.name?.toLowerCase().includes(needle)) {
+      return true;
+    }
+    if (mapping.code?.toLowerCase().includes(needle)) {
+      return true;
+    }
+    if (mapping.description?.toLowerCase().includes(needle)) {
+      return true;
+    }
+    return mapping.keywords.some((keyword) =>
+      keyword.toLowerCase().includes(needle)
+    );
+  });
 }

@@ -4,14 +4,23 @@ import {
   isValidMapping,
   mergeMappings,
 } from "./dictionary";
-import { formatCommitMessage, formatDocstringBlock } from "./gitmojiMatcher";
+import { registerGitmojiCompletion } from "./completion";
+import {
+  formatCommitMessage,
+  formatDocstringBlock,
+  formatToken,
+} from "./gitmojiMatcher";
 import {
   getActiveCommitMessage,
   setActiveCommitMessage,
 } from "./scmIntegration";
 import { CommitStatusBar } from "./statusBar";
 import { registerSupportCommand, SupportPanel } from "./supportPanel";
-import type { GitmojiMapping, GitmojiPosition } from "./types";
+import type {
+  GitmojiMapping,
+  GitmojiOutputFormat,
+  GitmojiPosition,
+} from "./types";
 
 const WELCOME_KEY = "autoGitmoji.welcomeShown";
 const LAST_VERSION_KEY = "autoGitmoji.lastSeenVersion";
@@ -29,6 +38,14 @@ function getPosition(): GitmojiPosition {
     .get<string>("position", "prefix");
 
   return configured === "after-type" ? "after-type" : "prefix";
+}
+
+function getOutputFormat(): GitmojiOutputFormat {
+  const configured = vscode.workspace
+    .getConfiguration("autoGitmoji")
+    .get<string>("outputFormat", "emoji");
+
+  return configured === "code" ? "code" : "emoji";
 }
 
 function readExplicitBoolean(
@@ -160,7 +177,8 @@ function registerFormatCommitCommand(
         const formatted = formatCommitMessage(
           current,
           sortedMappings,
-          getPosition()
+          getPosition(),
+          getOutputFormat()
         );
         if (formatted === current) {
           vscode.window.showInformationMessage(
@@ -209,7 +227,11 @@ function registerFormatDocstringCommand(
       }
 
       const original = document.getText(range);
-      const formatted = formatDocstringBlock(original, sortedMappings);
+      const formatted = formatDocstringBlock(
+        original,
+        sortedMappings,
+        getOutputFormat()
+      );
 
       if (formatted === original) {
         vscode.window.showInformationMessage(
@@ -231,16 +253,21 @@ function registerInsertPickerCommand(
 ): void {
   context.subscriptions.push(
     vscode.commands.registerCommand("autoGitmoji.insertGitmoji", async () => {
-      const items = sortedMappings.map((m) => ({
-        label: `${m.gitmoji} ${m.keywords[0]}`,
-        description: m.description,
-        detail: m.keywords.join(", "),
-        gitmoji: m.gitmoji,
-      }));
+      const outputFormat = getOutputFormat();
+      const items = sortedMappings.map((m) => {
+        const token = formatToken(m, outputFormat);
+        return {
+          label: `${m.gitmoji} ${m.name ?? m.keywords[0]}`,
+          description: m.semver ? `${m.description ?? ""} · ${m.semver}` : m.description,
+          detail: [m.code, ...m.keywords].filter(Boolean).join(", "),
+          token,
+        };
+      });
 
       const picked = await vscode.window.showQuickPick(items, {
         placeHolder: "Select a Gitmoji to insert",
         matchOnDetail: true,
+        matchOnDescription: true,
       });
 
       if (!picked) {
@@ -250,14 +277,14 @@ function registerInsertPickerCommand(
       const editor = vscode.window.activeTextEditor;
       if (editor) {
         await editor.edit((builder) => {
-          builder.insert(editor.selection.active, `${picked.gitmoji} `);
+          builder.insert(editor.selection.active, `${picked.token} `);
         });
         return;
       }
 
       const current = await getActiveCommitMessage();
       if (current !== undefined) {
-        await setActiveCommitMessage(`${picked.gitmoji} ${current}`.trim());
+        await setActiveCommitMessage(`${picked.token} ${current}`.trim());
         statusBar.refresh();
       }
     })
@@ -302,7 +329,8 @@ function registerAutoFormatOnBlur(context: vscode.ExtensionContext): void {
       const formatted = formatCommitMessage(
         current,
         sortedMappings,
-        getPosition()
+        getPosition(),
+        getOutputFormat()
       );
       if (formatted !== current) {
         await setActiveCommitMessage(formatted);
@@ -314,7 +342,7 @@ function registerAutoFormatOnBlur(context: vscode.ExtensionContext): void {
 export function activate(context: vscode.ExtensionContext): void {
   loadDictionary();
 
-  const statusBar = new CommitStatusBar(getMappings);
+  const statusBar = new CommitStatusBar(getMappings, getOutputFormat);
   context.subscriptions.push(statusBar);
   statusBar.start();
 
@@ -328,6 +356,13 @@ export function activate(context: vscode.ExtensionContext): void {
       if (event.affectsConfiguration("autoGitmoji.showStatusBar")) {
         statusBar.applyEnabledState();
       }
+
+      if (
+        event.affectsConfiguration("autoGitmoji.outputFormat") ||
+        event.affectsConfiguration("autoGitmoji.position")
+      ) {
+        statusBar.refresh();
+      }
     })
   );
 
@@ -337,6 +372,7 @@ export function activate(context: vscode.ExtensionContext): void {
   registerInsertPickerCommand(context, statusBar);
   registerOpenDictionaryCommand(context);
   registerAutoFormatOnBlur(context);
+  registerGitmojiCompletion(context, getMappings, getOutputFormat);
 
   void showWelcomeIfNeeded(context);
   void showMajorUpdateReminderIfNeeded(context);

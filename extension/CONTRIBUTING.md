@@ -12,21 +12,27 @@ Before proposing a change to the defaults, note that you can already add your ow
 
 ### Format
 
-Each entry in `mappings` must include:
+Each entry in `mappings` should include:
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| `keywords` | Yes | Lowercase words matched against the first token of a commit message or docstring summary (e.g. `fix`, `docs`, `feat`). |
+| `keywords` | Yes | Lowercase words matched against the first token of a commit message or docstring summary (e.g. `fix`, `docs`, `feat`). Prefer official gitmoji names plus conventional aliases on the same row. |
 | `gitmoji` | Yes | A single Unicode emoji inserted into the line. |
+| `code` | Yes (bundled) | Official shortcode including colons, e.g. `:bug:` (used when `autoGitmoji.outputFormat` is `code`). |
+| `name` | Yes (bundled) | Official gitmoji name without colons, e.g. `bug`. |
 | `description` | No | Shown in the Gitmoji picker and useful for reviewers. |
+| `semver` | No | Official impact: `major`, `minor`, `patch`, or `null`. |
 
 Example:
 
 ```json
 {
-  "keywords": ["fix", "bug", "hotfix"],
+  "keywords": ["bug", "fix", "hotfix", "patch"],
   "gitmoji": "🐛",
-  "description": "Fix a bug"
+  "code": ":bug:",
+  "name": "bug",
+  "description": "Fix a bug.",
+  "semver": "patch"
 }
 ```
 
@@ -34,7 +40,7 @@ Example:
 
 1. **Commit messages** — The matcher reads the conventional-commit type (`fix: …`, `feat(scope): …`, `feat!: …`) or the first word before a space.
 2. **Docstrings** — The first non-empty line of the selection is the summary line. The emoji is inserted after the comment marker, so `// fix parser` becomes `// 🐛 fix parser`.
-3. **No duplicate emoji** — If the line's content already starts with an emoji, nothing is inserted.
+3. **No duplicate emoji / shortcode** — If the line's content already starts with an emoji or an official `:shortcode:`, nothing is inserted.
 4. **Longest keyword wins** — When multiple entries could match, the entry with the longest keyword takes priority (sorted automatically in code).
 5. **User mappings win** — Entries from `autoGitmoji.customMappings` override bundled entries for the same keyword.
 

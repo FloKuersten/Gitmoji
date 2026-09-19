@@ -2,6 +2,20 @@
 
 All releases by **KueTech Digital** — [kuetech.at](https://kuetech.at)
 
+## 1.2.0
+
+### Added
+
+- `autoGitmoji.outputFormat` setting: insert a Unicode emoji (`🐛`) or an official shortcode (`:bug:`) — useful for GitLab and plain-text logs
+- Colon completion in the Source Control commit box (`scminput`) and `COMMIT_EDITMSG` files — type `:bug` or `:memo` for local IntelliSense
+- Official gitmoji shortcodes (`code`), names, and optional `semver` on every bundled mapping
+- Dictionary aligned with the official [gitmoji](https://github.com/carloscuesta/gitmoji) list (~75 entries), including `:ambulance:`, `:white_check_mark:`, `:package:`, `:bookmark:`, and more
+
+### Changed
+
+- Documentation emoji follows the official list: `docs` / `memo` → 📝 (`:memo:`) instead of 📚
+- Quick-pick shows official names, shortcodes, and semver hints; insert text respects `outputFormat`
+
 ## 1.1.0
 
 ### Added

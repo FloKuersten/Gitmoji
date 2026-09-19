@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
-import { matchGitmoji } from "./gitmojiMatcher";
+import { formatToken, matchGitmoji } from "./gitmojiMatcher";
 import { getActiveCommitMessage } from "./scmIntegration";
-import type { GitmojiMapping } from "./types";
+import type { GitmojiMapping, GitmojiOutputFormat } from "./types";
 
 const POLL_INTERVAL_MS = 2000;
 
@@ -18,9 +18,14 @@ export class CommitStatusBar {
   private timer: ReturnType<typeof setInterval> | undefined;
   private lastMessage: string | undefined;
   private getMappings: () => GitmojiMapping[];
+  private getOutputFormat: () => GitmojiOutputFormat;
 
-  constructor(getMappings: () => GitmojiMapping[]) {
+  constructor(
+    getMappings: () => GitmojiMapping[],
+    getOutputFormat: () => GitmojiOutputFormat = () => "emoji"
+  ) {
     this.getMappings = getMappings;
+    this.getOutputFormat = getOutputFormat;
     this.item = vscode.window.createStatusBarItem(
       vscode.StatusBarAlignment.Left,
       100
@@ -77,10 +82,11 @@ export class CommitStatusBar {
       return;
     }
 
+    const token = formatToken(mapping, this.getOutputFormat());
     this.item.text = `${mapping.gitmoji} Gitmoji`;
     this.item.tooltip = mapping.description
-      ? `Auto Gitmoji: apply ${mapping.gitmoji} (${mapping.description})`
-      : `Auto Gitmoji: apply ${mapping.gitmoji}`;
+      ? `Auto Gitmoji: apply ${token} (${mapping.description})`
+      : `Auto Gitmoji: apply ${token}`;
     this.item.show();
   }
 

@@ -1,320 +1,1030 @@
 {
-  "version": 2,
+  "version": 3,
   "mappings": [
     {
-      "keywords": ["feat", "feature", "add", "new"],
-      "gitmoji": "✨",
-      "description": "Introduce new features"
+      "keywords": [
+        "art",
+        "style",
+        "format",
+        "lint",
+        "prettier",
+        "eslint"
+      ],
+      "gitmoji": "🎨",
+      "code": ":art:",
+      "name": "art",
+      "description": "Improve structure / format of the code.",
+      "semver": null
     },
     {
-      "keywords": ["fix", "bug", "hotfix", "patch"],
-      "gitmoji": "🐛",
-      "description": "Fix a bug"
-    },
-    {
-      "keywords": ["docs", "documentation", "doc", "readme"],
-      "gitmoji": "📚",
-      "description": "Add or update documentation"
-    },
-    {
-      "keywords": ["style", "format", "lint", "prettier", "eslint"],
-      "gitmoji": "💎",
-      "description": "Improve structure / format"
-    },
-    {
-      "keywords": ["refactor", "restructure", "cleanup", "clean"],
-      "gitmoji": "♻️",
-      "description": "Refactor code"
-    },
-    {
-      "keywords": ["perf", "performance", "optimize", "speed"],
+      "keywords": [
+        "zap",
+        "perf",
+        "performance",
+        "optimize",
+        "speed"
+      ],
       "gitmoji": "⚡️",
-      "description": "Improve performance"
+      "code": ":zap:",
+      "name": "zap",
+      "description": "Improve performance.",
+      "semver": "patch"
     },
     {
-      "keywords": ["test", "tests", "testing", "spec", "coverage", "e2e", "unit"],
-      "gitmoji": "🧪",
-      "description": "Add or update tests"
-    },
-    {
-      "keywords": ["build", "ci", "cd", "pipeline", "workflow", "actions", "gha"],
-      "gitmoji": "👷",
-      "description": "Add or update CI build system"
-    },
-    {
-      "keywords": ["chore", "deps", "dependency", "bump", "upgrade"],
-      "gitmoji": "🔧",
-      "description": "Chore / tooling"
-    },
-    {
-      "keywords": ["revert", "rollback"],
-      "gitmoji": "⏪",
-      "description": "Revert changes"
-    },
-    {
-      "keywords": ["security", "secure", "vuln", "cve", "secret", "secrets", "credential"],
-      "gitmoji": "🔒",
-      "description": "Security improvements"
-    },
-    {
-      "keywords": ["deploy", "release", "ship", "publish"],
-      "gitmoji": "🚀",
-      "description": "Deploy / release"
-    },
-    {
-      "keywords": ["init", "bootstrap", "scaffold"],
-      "gitmoji": "🎉",
-      "description": "Begin a project"
-    },
-    {
-      "keywords": ["remove", "delete", "drop"],
+      "keywords": [
+        "fire",
+        "remove",
+        "delete",
+        "drop"
+      ],
       "gitmoji": "🔥",
-      "description": "Remove code or files"
+      "code": ":fire:",
+      "name": "fire",
+      "description": "Remove code or files.",
+      "semver": null
     },
     {
-      "keywords": ["move", "rename", "relocate"],
-      "gitmoji": "🚚",
-      "description": "Move or rename"
+      "keywords": [
+        "bug",
+        "fix",
+        "hotfix",
+        "patch"
+      ],
+      "gitmoji": "🐛",
+      "code": ":bug:",
+      "name": "bug",
+      "description": "Fix a bug.",
+      "semver": "patch"
     },
     {
-      "keywords": ["ui", "ux", "design", "css", "layout", "theme", "styling"],
+      "keywords": [
+        "ambulance",
+        "critical"
+      ],
+      "gitmoji": "🚑️",
+      "code": ":ambulance:",
+      "name": "ambulance",
+      "description": "Critical hotfix.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "sparkles",
+        "feat",
+        "feature",
+        "add",
+        "new"
+      ],
+      "gitmoji": "✨",
+      "code": ":sparkles:",
+      "name": "sparkles",
+      "description": "Introduce new features.",
+      "semver": "minor"
+    },
+    {
+      "keywords": [
+        "memo",
+        "docs",
+        "documentation",
+        "doc",
+        "readme"
+      ],
+      "gitmoji": "📝",
+      "code": ":memo:",
+      "name": "memo",
+      "description": "Add or update documentation.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "rocket",
+        "deploy",
+        "release",
+        "ship",
+        "publish"
+      ],
+      "gitmoji": "🚀",
+      "code": ":rocket:",
+      "name": "rocket",
+      "description": "Deploy stuff.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "lipstick",
+        "ui",
+        "ux",
+        "design",
+        "css",
+        "layout",
+        "theme",
+        "styling"
+      ],
       "gitmoji": "💄",
-      "description": "UI / style updates"
+      "code": ":lipstick:",
+      "name": "lipstick",
+      "description": "Add or update the UI and style files.",
+      "semver": "patch"
     },
     {
-      "keywords": ["i18n", "l10n", "locale", "translation", "translations"],
-      "gitmoji": "🌐",
-      "description": "Internationalization"
+      "keywords": [
+        "tada",
+        "init",
+        "bootstrap",
+        "scaffold"
+      ],
+      "gitmoji": "🎉",
+      "code": ":tada:",
+      "name": "tada",
+      "description": "Begin a project.",
+      "semver": null
     },
     {
-      "keywords": ["config", "settings", "env", "environment", "dotenv"],
-      "gitmoji": "🔧",
-      "description": "Configuration changes"
+      "keywords": [
+        "white-check-mark",
+        "whitecheckmark",
+        "pass",
+        "passing"
+      ],
+      "gitmoji": "✅",
+      "code": ":white_check_mark:",
+      "name": "white-check-mark",
+      "description": "Add, update, or pass tests.",
+      "semver": null
     },
     {
-      "keywords": ["breaking", "break"],
-      "gitmoji": "💥",
-      "description": "Breaking changes"
+      "keywords": [
+        "lock",
+        "security",
+        "secure",
+        "vuln",
+        "cve"
+      ],
+      "gitmoji": "🔒️",
+      "code": ":lock:",
+      "name": "lock",
+      "description": "Fix security or privacy issues.",
+      "semver": "patch"
     },
     {
-      "keywords": ["wip", "draft"],
+      "keywords": [
+        "closed-lock-with-key",
+        "closedlockwithkey",
+        "secret",
+        "secrets",
+        "credential",
+        "credentials"
+      ],
+      "gitmoji": "🔐",
+      "code": ":closed_lock_with_key:",
+      "name": "closed-lock-with-key",
+      "description": "Add or update secrets.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "bookmark",
+        "tag",
+        "tags",
+        "version"
+      ],
+      "gitmoji": "🔖",
+      "code": ":bookmark:",
+      "name": "bookmark",
+      "description": "Release / Version tags.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "rotating-light",
+        "rotatinglight",
+        "warning",
+        "warnings",
+        "linter"
+      ],
+      "gitmoji": "🚨",
+      "code": ":rotating_light:",
+      "name": "rotating-light",
+      "description": "Fix compiler / linter warnings.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "construction",
+        "wip",
+        "draft"
+      ],
       "gitmoji": "🚧",
-      "description": "Work in progress"
+      "code": ":construction:",
+      "name": "construction",
+      "description": "Work in progress.",
+      "semver": null
     },
     {
-      "keywords": ["merge", "conflict"],
-      "gitmoji": "🔀",
-      "description": "Merge branches"
+      "keywords": [
+        "green-heart",
+        "greenheart",
+        "ci-fix",
+        "green"
+      ],
+      "gitmoji": "💚",
+      "code": ":green_heart:",
+      "name": "green-heart",
+      "description": "Fix CI Build.",
+      "semver": null
     },
     {
-      "keywords": ["db", "database", "migration", "schema"],
-      "gitmoji": "🗃️",
-      "description": "Database changes"
-    },
-    {
-      "keywords": ["log", "logging", "telemetry"],
-      "gitmoji": "🔊",
-      "description": "Add or update logs"
-    },
-    {
-      "keywords": ["mute", "remove-log"],
-      "gitmoji": "🔇",
-      "description": "Remove logs"
-    },
-    {
-      "keywords": ["accessibility", "a11y"],
-      "gitmoji": "♿",
-      "description": "Accessibility"
-    },
-    {
-      "keywords": ["analytics", "tracking", "metrics", "monitor", "monitoring"],
-      "gitmoji": "📈",
-      "description": "Analytics and monitoring"
-    },
-    {
-      "keywords": ["mock", "stub", "fake"],
-      "gitmoji": "🤡",
-      "description": "Mock things"
-    },
-    {
-      "keywords": ["egg", "easter"],
-      "gitmoji": "🥚",
-      "description": "Easter egg"
-    },
-    {
-      "keywords": ["comment", "todo", "note"],
-      "gitmoji": "💡",
-      "description": "Comments / ideas"
-    },
-    {
-      "keywords": ["docker", "container", "compose", "dockerfile"],
-      "gitmoji": "🐳",
-      "description": "Docker and containers"
-    },
-    {
-      "keywords": ["k8s", "kubernetes", "helm", "kustomize"],
-      "gitmoji": "☸️",
-      "description": "Kubernetes manifests"
-    },
-    {
-      "keywords": ["types", "typing", "typescript", "dts"],
-      "gitmoji": "🏷️",
-      "description": "Add or update types"
-    },
-    {
-      "keywords": ["assets", "images", "fonts", "icons"],
-      "gitmoji": "🍱",
-      "description": "Add or update assets"
-    },
-    {
-      "keywords": ["license", "licensing", "copyright"],
-      "gitmoji": "📄",
-      "description": "Add or update the license"
-    },
-    {
-      "keywords": ["seo", "metadata", "meta"],
-      "gitmoji": "🔍",
-      "description": "SEO and metadata"
-    },
-    {
-      "keywords": ["snapshot", "snapshots"],
-      "gitmoji": "📸",
-      "description": "Add or update snapshots"
-    },
-    {
-      "keywords": ["install", "add-dep", "deps-add"],
-      "gitmoji": "➕",
-      "description": "Add a dependency"
-    },
-    {
-      "keywords": ["uninstall", "remove-dep", "deps-remove"],
-      "gitmoji": "➖",
-      "description": "Remove a dependency"
-    },
-    {
-      "keywords": ["deps-up", "update-deps", "dependabot"],
-      "gitmoji": "⬆️",
-      "description": "Upgrade dependencies"
-    },
-    {
-      "keywords": ["deps-down", "downgrade"],
+      "keywords": [
+        "arrow-down",
+        "arrowdown",
+        "deps-down",
+        "downgrade"
+      ],
       "gitmoji": "⬇️",
-      "description": "Downgrade dependencies"
+      "code": ":arrow_down:",
+      "name": "arrow-down",
+      "description": "Downgrade dependencies.",
+      "semver": "patch"
     },
     {
-      "keywords": ["pin", "pinned", "lock", "lockfile"],
+      "keywords": [
+        "arrow-up",
+        "arrowup",
+        "deps",
+        "dependency",
+        "bump",
+        "upgrade",
+        "deps-up",
+        "update-deps",
+        "dependabot"
+      ],
+      "gitmoji": "⬆️",
+      "code": ":arrow_up:",
+      "name": "arrow-up",
+      "description": "Upgrade dependencies.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "pushpin",
+        "pin",
+        "pinned",
+        "lockfile"
+      ],
       "gitmoji": "📌",
-      "description": "Pin dependencies to specific versions"
+      "code": ":pushpin:",
+      "name": "pushpin",
+      "description": "Pin dependencies to specific versions.",
+      "semver": "patch"
     },
     {
-      "keywords": ["infra", "infrastructure", "terraform", "architecture"],
-      "gitmoji": "🏗️",
-      "description": "Architectural changes"
+      "keywords": [
+        "construction-worker",
+        "constructionworker",
+        "build",
+        "ci",
+        "cd",
+        "pipeline",
+        "workflow",
+        "actions",
+        "gha"
+      ],
+      "gitmoji": "👷",
+      "code": ":construction_worker:",
+      "name": "construction-worker",
+      "description": "Add or update CI build system.",
+      "semver": null
     },
     {
-      "keywords": ["script", "scripts", "tooling", "makefile"],
+      "keywords": [
+        "chart-with-upwards-trend",
+        "chartwithupwardstrend",
+        "analytics",
+        "tracking",
+        "metrics",
+        "monitor",
+        "monitoring"
+      ],
+      "gitmoji": "📈",
+      "code": ":chart_with_upwards_trend:",
+      "name": "chart-with-upwards-trend",
+      "description": "Add or update analytics or track code.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "recycle",
+        "refactor",
+        "restructure",
+        "cleanup",
+        "clean"
+      ],
+      "gitmoji": "♻️",
+      "code": ":recycle:",
+      "name": "recycle",
+      "description": "Refactor code.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "heavy-plus-sign",
+        "heavyplussign",
+        "install",
+        "add-dep",
+        "deps-add"
+      ],
+      "gitmoji": "➕",
+      "code": ":heavy_plus_sign:",
+      "name": "heavy-plus-sign",
+      "description": "Add a dependency.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "heavy-minus-sign",
+        "heavyminussign",
+        "uninstall",
+        "remove-dep",
+        "deps-remove"
+      ],
+      "gitmoji": "➖",
+      "code": ":heavy_minus_sign:",
+      "name": "heavy-minus-sign",
+      "description": "Remove a dependency.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "wrench",
+        "chore",
+        "config",
+        "settings",
+        "env",
+        "environment",
+        "dotenv"
+      ],
+      "gitmoji": "🔧",
+      "code": ":wrench:",
+      "name": "wrench",
+      "description": "Add or update configuration files.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "hammer",
+        "script",
+        "scripts",
+        "tooling",
+        "makefile"
+      ],
       "gitmoji": "🔨",
-      "description": "Add or update development scripts"
+      "code": ":hammer:",
+      "name": "hammer",
+      "description": "Add or update development scripts.",
+      "semver": null
     },
     {
-      "keywords": ["healthcheck", "health"],
-      "gitmoji": "🩺",
-      "description": "Add or update a health check"
+      "keywords": [
+        "globe-with-meridians",
+        "globewithmeridians",
+        "i18n",
+        "l10n",
+        "locale",
+        "translation",
+        "translations"
+      ],
+      "gitmoji": "🌐",
+      "code": ":globe_with_meridians:",
+      "name": "globe-with-meridians",
+      "description": "Internationalization and localization.",
+      "semver": "patch"
     },
     {
-      "keywords": ["responsive", "mobile"],
-      "gitmoji": "📱",
-      "description": "Responsive design"
-    },
-    {
-      "keywords": ["text", "copy", "wording", "literals"],
-      "gitmoji": "💬",
-      "description": "Add or update text and literals"
-    },
-    {
-      "keywords": ["validation", "validate"],
-      "gitmoji": "🦺",
-      "description": "Add or update validation"
-    },
-    {
-      "keywords": ["auth", "authentication", "authorization", "permissions", "roles"],
-      "gitmoji": "🛂",
-      "description": "Authorization, roles, and permissions"
-    },
-    {
-      "keywords": ["concurrency", "thread", "threading", "async"],
-      "gitmoji": "🧵",
-      "description": "Multithreading or concurrency"
-    },
-    {
-      "keywords": ["error", "errors", "exception", "catch"],
-      "gitmoji": "🥅",
-      "description": "Catch errors"
-    },
-    {
-      "keywords": ["animation", "animations", "transition"],
-      "gitmoji": "💫",
-      "description": "Add or update animations"
-    },
-    {
-      "keywords": ["deadcode", "dead-code", "deprecate", "deprecated"],
-      "gitmoji": "⚰️",
-      "description": "Remove dead code"
-    },
-    {
-      "keywords": ["experiment", "experimental", "poc"],
-      "gitmoji": "⚗️",
-      "description": "Perform experiments"
-    },
-    {
-      "keywords": ["typo", "typos", "spelling"],
+      "keywords": [
+        "pencil2",
+        "typo",
+        "typos",
+        "spelling"
+      ],
       "gitmoji": "✏️",
-      "description": "Fix typos"
+      "code": ":pencil2:",
+      "name": "pencil2",
+      "description": "Fix typos.",
+      "semver": "patch"
     },
     {
-      "keywords": ["business", "logic", "rules"],
-      "gitmoji": "👔",
-      "description": "Add or update business logic"
+      "keywords": [
+        "poop",
+        "hack"
+      ],
+      "gitmoji": "💩",
+      "code": ":poop:",
+      "name": "poop",
+      "description": "Write bad code that needs to be improved.",
+      "semver": null
     },
     {
-      "keywords": ["offline", "pwa", "service-worker"],
-      "gitmoji": "✈️",
-      "description": "Improve offline support"
+      "keywords": [
+        "rewind",
+        "revert",
+        "rollback"
+      ],
+      "gitmoji": "⏪️",
+      "code": ":rewind:",
+      "name": "rewind",
+      "description": "Revert changes.",
+      "semver": "patch"
     },
     {
-      "keywords": ["flag", "flags", "feature-flag", "toggle"],
-      "gitmoji": "🚩",
-      "description": "Add, update, or remove feature flags"
+      "keywords": [
+        "twisted-rightwards-arrows",
+        "twistedrightwardsarrows",
+        "merge",
+        "conflict"
+      ],
+      "gitmoji": "🔀",
+      "code": ":twisted_rightwards_arrows:",
+      "name": "twisted-rightwards-arrows",
+      "description": "Merge branches.",
+      "semver": null
     },
     {
-      "keywords": ["gitignore", "ignore"],
-      "gitmoji": "🙈",
-      "description": "Add or update a .gitignore file"
+      "keywords": [
+        "package",
+        "compiled",
+        "bundle"
+      ],
+      "gitmoji": "📦️",
+      "code": ":package:",
+      "name": "package",
+      "description": "Add or update compiled files or packages.",
+      "semver": "patch"
     },
     {
-      "keywords": ["contributor", "contributors", "authors"],
+      "keywords": [
+        "alien",
+        "api",
+        "endpoint",
+        "integration",
+        "external-api"
+      ],
+      "gitmoji": "👽️",
+      "code": ":alien:",
+      "name": "alien",
+      "description": "Update code due to external API changes.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "truck",
+        "move",
+        "rename",
+        "relocate"
+      ],
+      "gitmoji": "🚚",
+      "code": ":truck:",
+      "name": "truck",
+      "description": "Move or rename resources (e.g.: files, paths, routes).",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "page-facing-up",
+        "pagefacingup",
+        "license",
+        "licensing",
+        "copyright"
+      ],
+      "gitmoji": "📄",
+      "code": ":page_facing_up:",
+      "name": "page-facing-up",
+      "description": "Add or update license.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "boom",
+        "breaking",
+        "break"
+      ],
+      "gitmoji": "💥",
+      "code": ":boom:",
+      "name": "boom",
+      "description": "Introduce breaking changes.",
+      "semver": "major"
+    },
+    {
+      "keywords": [
+        "bento",
+        "assets",
+        "images",
+        "fonts",
+        "icons"
+      ],
+      "gitmoji": "🍱",
+      "code": ":bento:",
+      "name": "bento",
+      "description": "Add or update assets.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "wheelchair",
+        "accessibility",
+        "a11y"
+      ],
+      "gitmoji": "♿️",
+      "code": ":wheelchair:",
+      "name": "wheelchair",
+      "description": "Improve accessibility.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "bulb",
+        "comment",
+        "todo",
+        "note"
+      ],
+      "gitmoji": "💡",
+      "code": ":bulb:",
+      "name": "bulb",
+      "description": "Add or update comments in source code.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "beers"
+      ],
+      "gitmoji": "🍻",
+      "code": ":beers:",
+      "name": "beers",
+      "description": "Write code drunkenly.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "speech-balloon",
+        "speechballoon",
+        "text",
+        "copy",
+        "wording",
+        "literals"
+      ],
+      "gitmoji": "💬",
+      "code": ":speech_balloon:",
+      "name": "speech-balloon",
+      "description": "Add or update text and literals.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "card-file-box",
+        "cardfilebox",
+        "db",
+        "database",
+        "migration",
+        "schema"
+      ],
+      "gitmoji": "🗃️",
+      "code": ":card_file_box:",
+      "name": "card-file-box",
+      "description": "Perform database related changes.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "loud-sound",
+        "loudsound",
+        "log",
+        "logging",
+        "telemetry"
+      ],
+      "gitmoji": "🔊",
+      "code": ":loud_sound:",
+      "name": "loud-sound",
+      "description": "Add or update logs.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "mute",
+        "remove-log"
+      ],
+      "gitmoji": "🔇",
+      "code": ":mute:",
+      "name": "mute",
+      "description": "Remove logs.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "busts-in-silhouette",
+        "bustsinsilhouette",
+        "contributor",
+        "contributors",
+        "authors"
+      ],
       "gitmoji": "👥",
-      "description": "Add or update contributors"
+      "code": ":busts_in_silhouette:",
+      "name": "busts-in-silhouette",
+      "description": "Add or update contributor(s).",
+      "semver": null
     },
     {
-      "keywords": ["sponsor", "funding", "donation", "donate"],
+      "keywords": [
+        "children-crossing",
+        "childrencrossing",
+        "ux-improve",
+        "usability"
+      ],
+      "gitmoji": "🚸",
+      "code": ":children_crossing:",
+      "name": "children-crossing",
+      "description": "Improve user experience / usability.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "building-construction",
+        "buildingconstruction",
+        "infra",
+        "infrastructure",
+        "terraform",
+        "architecture"
+      ],
+      "gitmoji": "🏗️",
+      "code": ":building_construction:",
+      "name": "building-construction",
+      "description": "Make architectural changes.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "iphone",
+        "responsive",
+        "mobile"
+      ],
+      "gitmoji": "📱",
+      "code": ":iphone:",
+      "name": "iphone",
+      "description": "Work on responsive design.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "clown-face",
+        "clownface",
+        "mock",
+        "stub",
+        "fake"
+      ],
+      "gitmoji": "🤡",
+      "code": ":clown_face:",
+      "name": "clown-face",
+      "description": "Mock things.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "egg",
+        "easter"
+      ],
+      "gitmoji": "🥚",
+      "code": ":egg:",
+      "name": "egg",
+      "description": "Add or update an easter egg.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "see-no-evil",
+        "seenoevil",
+        "gitignore",
+        "ignore"
+      ],
+      "gitmoji": "🙈",
+      "code": ":see_no_evil:",
+      "name": "see-no-evil",
+      "description": "Add or update a .gitignore file.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "camera-flash",
+        "cameraflash",
+        "snapshot",
+        "snapshots"
+      ],
+      "gitmoji": "📸",
+      "code": ":camera_flash:",
+      "name": "camera-flash",
+      "description": "Add or update snapshots.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "alembic",
+        "experiment",
+        "experimental",
+        "poc"
+      ],
+      "gitmoji": "⚗️",
+      "code": ":alembic:",
+      "name": "alembic",
+      "description": "Perform experiments.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "mag",
+        "seo",
+        "metadata",
+        "meta"
+      ],
+      "gitmoji": "🔍️",
+      "code": ":mag:",
+      "name": "mag",
+      "description": "Improve SEO.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "label",
+        "types",
+        "typing",
+        "typescript",
+        "dts"
+      ],
+      "gitmoji": "🏷️",
+      "code": ":label:",
+      "name": "label",
+      "description": "Add or update types.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "seedling",
+        "seed",
+        "seeds"
+      ],
+      "gitmoji": "🌱",
+      "code": ":seedling:",
+      "name": "seedling",
+      "description": "Add or update seed files.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "triangular-flag-on-post",
+        "triangularflagonpost",
+        "flag",
+        "flags",
+        "feature-flag",
+        "toggle"
+      ],
+      "gitmoji": "🚩",
+      "code": ":triangular_flag_on_post:",
+      "name": "triangular-flag-on-post",
+      "description": "Add, update, or remove feature flags.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "goal-net",
+        "goalnet",
+        "error",
+        "errors",
+        "exception",
+        "catch"
+      ],
+      "gitmoji": "🥅",
+      "code": ":goal_net:",
+      "name": "goal-net",
+      "description": "Catch errors.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "dizzy",
+        "animation",
+        "animations",
+        "transition"
+      ],
+      "gitmoji": "💫",
+      "code": ":dizzy:",
+      "name": "dizzy",
+      "description": "Add or update animations and transitions.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "wastebasket",
+        "deprecate",
+        "deprecated"
+      ],
+      "gitmoji": "🗑️",
+      "code": ":wastebasket:",
+      "name": "wastebasket",
+      "description": "Deprecate code that needs to be cleaned up.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "passport-control",
+        "passportcontrol",
+        "auth",
+        "authentication",
+        "authorization",
+        "permissions",
+        "roles"
+      ],
+      "gitmoji": "🛂",
+      "code": ":passport_control:",
+      "name": "passport-control",
+      "description": "Work on code related to authorization, roles and permissions.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "adhesive-bandage",
+        "adhesivebandage",
+        "simple-fix",
+        "bandaid"
+      ],
+      "gitmoji": "🩹",
+      "code": ":adhesive_bandage:",
+      "name": "adhesive-bandage",
+      "description": "Simple fix for a non-critical issue.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "monocle-face",
+        "monocleface",
+        "explore",
+        "inspect",
+        "inspection"
+      ],
+      "gitmoji": "🧐",
+      "code": ":monocle_face:",
+      "name": "monocle-face",
+      "description": "Data exploration/inspection.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "coffin",
+        "deadcode",
+        "dead-code"
+      ],
+      "gitmoji": "⚰️",
+      "code": ":coffin:",
+      "name": "coffin",
+      "description": "Remove dead code.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "test-tube",
+        "testtube",
+        "test",
+        "tests",
+        "testing",
+        "spec",
+        "coverage",
+        "e2e",
+        "unit"
+      ],
+      "gitmoji": "🧪",
+      "code": ":test_tube:",
+      "name": "test-tube",
+      "description": "Add a failing test.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "necktie",
+        "business",
+        "logic",
+        "rules"
+      ],
+      "gitmoji": "👔",
+      "code": ":necktie:",
+      "name": "necktie",
+      "description": "Add or update business logic.",
+      "semver": "patch"
+    },
+    {
+      "keywords": [
+        "stethoscope",
+        "healthcheck",
+        "health"
+      ],
+      "gitmoji": "🩺",
+      "code": ":stethoscope:",
+      "name": "stethoscope",
+      "description": "Add or update healthcheck.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "bricks",
+        "k8s",
+        "kubernetes",
+        "helm",
+        "kustomize",
+        "docker",
+        "container",
+        "compose",
+        "dockerfile"
+      ],
+      "gitmoji": "🧱",
+      "code": ":bricks:",
+      "name": "bricks",
+      "description": "Infrastructure related changes.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "technologist",
+        "dx",
+        "devex",
+        "developer-experience"
+      ],
+      "gitmoji": "🧑‍💻",
+      "code": ":technologist:",
+      "name": "technologist",
+      "description": "Improve developer experience.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "money-with-wings",
+        "moneywithwings",
+        "sponsor",
+        "funding",
+        "donation",
+        "donate"
+      ],
       "gitmoji": "💸",
-      "description": "Add sponsorships or money-related infrastructure"
+      "code": ":money_with_wings:",
+      "name": "money-with-wings",
+      "description": "Add sponsorships or money related infrastructure.",
+      "semver": null
     },
     {
-      "keywords": ["api", "endpoint", "integration"],
-      "gitmoji": "🔌",
-      "description": "API and integration changes"
+      "keywords": [
+        "thread",
+        "concurrency",
+        "threading",
+        "async"
+      ],
+      "gitmoji": "🧵",
+      "code": ":thread:",
+      "name": "thread",
+      "description": "Add or update code related to multithreading or concurrency.",
+      "semver": null
     },
     {
-      "keywords": ["cache", "caching", "storage", "persist"],
-      "gitmoji": "💾",
-      "description": "Caching and persistence"
+      "keywords": [
+        "safety-vest",
+        "safetyvest",
+        "validation",
+        "validate"
+      ],
+      "gitmoji": "🦺",
+      "code": ":safety_vest:",
+      "name": "safety-vest",
+      "description": "Add or update code related to validation.",
+      "semver": null
     },
     {
-      "keywords": ["keybinding", "keybindings", "shortcut", "shortcuts"],
-      "gitmoji": "⌨️",
-      "description": "Keyboard shortcuts"
+      "keywords": [
+        "airplane",
+        "offline",
+        "pwa",
+        "service-worker"
+      ],
+      "gitmoji": "✈️",
+      "code": ":airplane:",
+      "name": "airplane",
+      "description": "Improve offline support.",
+      "semver": null
+    },
+    {
+      "keywords": [
+        "t-rex",
+        "trex",
+        "compat",
+        "compatibility",
+        "backwards"
+      ],
+      "gitmoji": "🦖",
+      "code": ":t-rex:",
+      "name": "t-rex",
+      "description": "Code that adds backwards compatibility.",
+      "semver": null
     }
   ]
 }

@@ -2,9 +2,11 @@ import { describe, expect, it } from "vitest";
 import dictionary from "../../data/gitmoji-map.json";
 import {
   extractCommitKeyword,
+  filterMappingsForCompletion,
   formatCommitMessage,
   formatDocstringBlock,
   formatDocstringLine,
+  formatToken,
   hasLeadingGitmoji,
   loadSortedMappings,
   matchGitmoji,
@@ -70,6 +72,11 @@ describe("hasLeadingGitmoji", () => {
     expect(hasLeadingGitmoji("1️⃣ first")).toBe(true);
   });
 
+  it("detects an official shortcode prefix", () => {
+    expect(hasLeadingGitmoji(":bug: fix crash")).toBe(true);
+    expect(hasLeadingGitmoji(":white_check_mark: tests")).toBe(true);
+  });
+
   it("returns false for plain text and blank input", () => {
     expect(hasLeadingGitmoji("fix: bug")).toBe(false);
     expect(hasLeadingGitmoji("")).toBe(false);
@@ -100,12 +107,13 @@ describe("formatCommitMessage", () => {
   it.each([
     ["feat: add login", "✨ feat: add login"],
     ["fix: crash on save", "🐛 fix: crash on save"],
-    ["docs: api guide", "📚 docs: api guide"],
+    ["docs: api guide", "📝 docs: api guide"],
     ["refactor: auth module", "♻️ refactor: auth module"],
     ["perf: smaller bundle", "⚡️ perf: smaller bundle"],
     ["test: add unit tests", "🧪 test: add unit tests"],
     ["chore: bump deps", "🔧 chore: bump deps"],
-    ["security: sanitize input", "🔒 security: sanitize input"],
+    ["security: sanitize input", "🔒️ security: sanitize input"],
+    ["ambulance: production down", "🚑️ ambulance: production down"],
   ])("formats %s", (input, expected) => {
     expect(formatCommitMessage(input, mappings)).toBe(expected);
   });
@@ -120,9 +128,30 @@ describe("formatCommitMessage", () => {
     expect(formatCommitMessage("FIX: crash", mappings)).toBe("🐛 FIX: crash");
   });
 
+  it("matches an official shortcode name as the commit type", () => {
+    expect(formatCommitMessage("memo: update readme", mappings)).toBe(
+      "📝 memo: update readme"
+    );
+  });
+
+  it("inserts a shortcode when outputFormat is code", () => {
+    expect(formatCommitMessage("fix: crash", mappings, "prefix", "code")).toBe(
+      ":bug: fix: crash"
+    );
+    expect(
+      formatCommitMessage("docs: api guide", mappings, "prefix", "code")
+    ).toBe(":memo: docs: api guide");
+  });
+
   it("leaves a message that already has an emoji untouched", () => {
     expect(formatCommitMessage("🐛 fix: crash", mappings)).toBe(
       "🐛 fix: crash"
+    );
+  });
+
+  it("leaves a message that already has a shortcode untouched", () => {
+    expect(formatCommitMessage(":bug: fix: crash", mappings)).toBe(
+      ":bug: fix: crash"
     );
   });
 
@@ -144,10 +173,58 @@ describe("formatCommitMessage", () => {
     ).toBe("feat(api): ✨ add route");
   });
 
+  it("inserts a shortcode after the type when both options are set", () => {
+    expect(
+      formatCommitMessage("fix: crash", mappings, "after-type", "code")
+    ).toBe("fix: :bug: crash");
+  });
+
   it("falls back to a prefix when after-type has no type prefix", () => {
     expect(formatCommitMessage("fix crash", mappings, "after-type")).toBe(
       "🐛 fix crash"
     );
+  });
+});
+
+describe("formatToken", () => {
+  const bug = mappings.find((m) => m.name === "bug")!;
+
+  it("returns the emoji by default", () => {
+    expect(formatToken(bug)).toBe("🐛");
+    expect(formatToken(bug, "emoji")).toBe("🐛");
+  });
+
+  it("returns the official shortcode when asked", () => {
+    expect(formatToken(bug, "code")).toBe(":bug:");
+  });
+
+  it("synthesizes a shortcode from name when code is missing", () => {
+    expect(
+      formatToken({ keywords: ["x"], gitmoji: "🐛", name: "bug" }, "code")
+    ).toBe(":bug:");
+  });
+});
+
+describe("filterMappingsForCompletion", () => {
+  it("returns every mapping when the filter is empty", () => {
+    expect(filterMappingsForCompletion("", mappings)).toHaveLength(
+      mappings.length
+    );
+  });
+
+  it("filters by shortcode fragment", () => {
+    const results = filterMappingsForCompletion("ambu", mappings);
+    expect(results.some((m) => m.code === ":ambulance:")).toBe(true);
+  });
+
+  it("filters by official name", () => {
+    const results = filterMappingsForCompletion("memo", mappings);
+    expect(results.some((m) => m.name === "memo")).toBe(true);
+  });
+
+  it("filters by conventional keyword alias", () => {
+    const results = filterMappingsForCompletion("docs", mappings);
+    expect(results.some((m) => m.gitmoji === "📝")).toBe(true);
   });
 });
 
@@ -168,7 +245,7 @@ describe("matchGitmoji", () => {
 describe("formatDocstringLine", () => {
   it.each([
     ["// fix the parser", "// 🐛 fix the parser"],
-    ["# docs for the api", "# 📚 docs for the api"],
+    ["# docs for the api", "# 📝 docs for the api"],
     [" * feat description", " * ✨ feat description"],
     ["-- refactor query", "-- ♻️ refactor query"],
   ])("formats %s", (input, expected) => {
@@ -266,6 +343,29 @@ describe("bundled dictionary", () => {
       expect(mapping.gitmoji.length).toBeGreaterThan(0);
       expect(mapping.keywords.length).toBeGreaterThan(0);
     }
+  });
+
+  it("includes official shortcodes and names on every entry", () => {
+    for (const mapping of mappings) {
+      expect(mapping.code).toMatch(/^:[a-z0-9_+-]+:$/i);
+      expect(mapping.name?.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("keeps conventional aliases on the official docs and feat rows", () => {
+    const docs = mappings.find((m) => m.name === "memo");
+    const feat = mappings.find((m) => m.name === "sparkles");
+    expect(docs?.gitmoji).toBe("📝");
+    expect(docs?.keywords).toEqual(
+      expect.arrayContaining(["docs", "documentation", "memo"])
+    );
+    expect(feat?.keywords).toEqual(expect.arrayContaining(["feat", "feature"]));
+  });
+
+  it("exposes semver on breaking, feature, and bugfix entries", () => {
+    expect(mappings.find((m) => m.name === "boom")?.semver).toBe("major");
+    expect(mappings.find((m) => m.name === "sparkles")?.semver).toBe("minor");
+    expect(mappings.find((m) => m.name === "bug")?.semver).toBe("patch");
   });
 
   it("starts every emoji with a character the matcher recognizes", () => {

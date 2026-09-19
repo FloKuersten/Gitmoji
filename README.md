@@ -13,7 +13,7 @@ Turn plain commit messages into expressive, standardized Git history — **🚀 
 <p align="center">
   <code>fix: login bug</code> &nbsp;→&nbsp; <code>🐛 fix: login bug</code><br/>
   <code>feat: dark mode</code> &nbsp;→&nbsp; <code>✨ feat: dark mode</code><br/>
-  <code>docs: readme</code> &nbsp;→&nbsp; <code>📚 docs: readme</code>
+  <code>docs: readme</code> &nbsp;→&nbsp; <code>📝 docs: readme</code>
 </p>
 
 ---
@@ -22,7 +22,7 @@ Turn plain commit messages into expressive, standardized Git history — **🚀 
 
 | Problem | How we help |
 |--------|-------------|
-| 😶 Boring commit messages | Auto-insert the right [Gitmoji](https://gitmoji.dev) from 63 keyword groups |
+| 😶 Boring commit messages | Auto-insert the right [Gitmoji](https://gitmoji.dev) from ~75 official entries (+ conventional aliases) |
 | 🐢 Slow cloud tools | **Zero latency** — everything runs on your machine |
 | 🔐 Privacy concerns | **No code leaves your editor** for matching |
 | 🤖 AI you don't need | **No AI** — predictable dictionary + regex only |

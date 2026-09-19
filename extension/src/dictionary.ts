@@ -7,12 +7,42 @@ import type { GitmojiMapping } from "./types";
  * broken build degrades to a working subset instead of failing activation.
  */
 const FALLBACK_MAPPINGS: GitmojiMapping[] = [
-  { keywords: ["feat", "feature", "add"], gitmoji: "✨" },
-  { keywords: ["fix", "bug"], gitmoji: "🐛" },
-  { keywords: ["docs", "doc"], gitmoji: "📚" },
-  { keywords: ["refactor"], gitmoji: "♻️" },
-  { keywords: ["test", "tests"], gitmoji: "🧪" },
-  { keywords: ["chore"], gitmoji: "🔧" },
+  {
+    keywords: ["feat", "feature", "add"],
+    gitmoji: "✨",
+    code: ":sparkles:",
+    name: "sparkles",
+  },
+  {
+    keywords: ["fix", "bug"],
+    gitmoji: "🐛",
+    code: ":bug:",
+    name: "bug",
+  },
+  {
+    keywords: ["docs", "doc"],
+    gitmoji: "📝",
+    code: ":memo:",
+    name: "memo",
+  },
+  {
+    keywords: ["refactor"],
+    gitmoji: "♻️",
+    code: ":recycle:",
+    name: "recycle",
+  },
+  {
+    keywords: ["test", "tests"],
+    gitmoji: "🧪",
+    code: ":test_tube:",
+    name: "test-tube",
+  },
+  {
+    keywords: ["chore"],
+    gitmoji: "🔧",
+    code: ":wrench:",
+    name: "wrench",
+  },
 ];
 
 export function isValidMapping(value: unknown): value is GitmojiMapping {
@@ -34,7 +64,7 @@ export function isValidMapping(value: unknown): value is GitmojiMapping {
 
 export function getBuiltInMappings(): GitmojiMapping[] {
   const mappings = Array.isArray(bundledDictionary?.mappings)
-    ? bundledDictionary.mappings.filter(isValidMapping)
+    ? (bundledDictionary.mappings as GitmojiMapping[]).filter(isValidMapping)
     : [];
 
   return mappings.length > 0 ? mappings : FALLBACK_MAPPINGS;

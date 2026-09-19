@@ -23,7 +23,9 @@ Insert [Gitmojis](https://gitmoji.dev) into **Git commit messages** and **docstr
 
 | Feature | Emoji | Description |
 |---------|-------|-------------|
-| **Offline matching** | 📋 | 63 built-in groups in `data/gitmoji-map.json` + regex — `fix` → 🐛, `feat` → ✨, `docs` → 📚 |
+| **Offline matching** | 📋 | ~75 official gitmoji entries in `data/gitmoji-map.json` + regex — `fix` → 🐛, `feat` → ✨, `docs` → 📝 |
+| **Shortcodes** | 🏷️ | `autoGitmoji.outputFormat`: emoji (`🐛`) or code (`:bug:`) for GitLab / plain logs |
+| **SCM IntelliSense** | ⌨️ | Type `:` in the commit box for local colon completion (`:bug`, `:memo`, …) |
 | **Custom mappings** | 🧩 | Override or extend the dictionary from your settings |
 | **Status bar hint** | 👀 | See the emoji before applying it; click to insert |
 | **Format commit** | 💬 | Git SCM input box — one command |
@@ -81,12 +83,12 @@ On macOS use `Cmd` instead of `Ctrl`.
 |--------|-------|
 | `feat: add login` | `✨ feat: add login` |
 | `fix: crash on save` | `🐛 fix: crash on save` |
-| `docs: api guide` | `📚 docs: api guide` |
+| `docs: api guide` | `📝 docs: api guide` |
 | `refactor: auth module` | `♻️ refactor: auth module` |
 | `perf: reduce bundle size` | `⚡️ perf: reduce bundle size` |
 | `test: add unit tests` | `🧪 test: add unit tests` |
 | `chore: bump deps` | `🔧 chore: bump deps` |
-| `security: sanitize input` | `🔒 security: sanitize input` |
+| `security: sanitize input` | `🔒️ security: sanitize input` |
 
 Supports **Conventional Commits**: `type(scope): message` and simple `type: message` formats.
 
@@ -97,12 +99,17 @@ Supports **Conventional Commits**: `type(scope): message` and simple `type: mess
 | Setting | Default | Description |
 |---------|---------|-------------|
 | `autoGitmoji.customMappings` | `[]` | 🧩 Your own keyword-to-emoji entries |
+| `autoGitmoji.outputFormat` | `emoji` | Insert Unicode emoji (`🐛`) or shortcode (`:bug:`) |
 | `autoGitmoji.position` | `prefix` | Emoji at the start, or after the commit type |
 | `autoGitmoji.showStatusBar` | `true` | Show the suggested emoji in the status bar |
 | `autoGitmoji.formatOnFocusLoss` | `false` | Format the commit box when the window loses focus |
 | `autoGitmoji.notifyOnMajorUpdates` | `true` | One-time reminder after major updates |
 | `autoGitmoji.buyMeACoffeeUrl` | [buymeacoffee.com/kuetech](https://www.buymeacoffee.com/kuetech) | ☕ Support link |
 | `autoGitmoji.websiteUrl` | [kuetech.at](https://kuetech.at) | 🌐 Company website |
+
+### ⌨️ SCM colon completion
+
+In the **Source Control** commit message box (or a `COMMIT_EDITMSG` file), type `:` to open IntelliSense backed by the local dictionary. Filter with `:bug`, `:memo`, `:ambulance`, or a keyword alias like `:docs`. Inserted text follows `autoGitmoji.outputFormat`.
 
 ### 🧩 Custom mappings
 
