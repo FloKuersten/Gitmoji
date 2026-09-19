@@ -41,6 +41,7 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json.example
+!.vscode/auto-gitmoji.json.example
 !.vscode/launch.json
 !.vscode/tasks.json
 
