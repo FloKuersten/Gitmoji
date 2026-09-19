@@ -1,0 +1,28 @@
+{
+  "name": "auto-gitmoji-monorepo",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Repository root for Auto Gitmoji & Docs. The extension lives in ./extension.",
+  "license": "MIT",
+  "author": {
+    "name": "KueTech Digital",
+    "url": "https://kuetech.at"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FloKuersten/Gitmoji.git"
+  },
+  "scripts": {
+    "build": "npm --prefix extension run build",
+    "watch": "npm --prefix extension run watch",
+    "lint": "npm --prefix extension run lint",
+    "format": "npm --prefix extension run format",
+    "typecheck": "npm --prefix extension run typecheck",
+    "test": "npm --prefix extension test",
+    "package": "npm --prefix extension run package",
+    "install:extension": "npm --prefix extension install"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

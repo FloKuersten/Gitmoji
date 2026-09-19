@@ -53,6 +53,10 @@ coverage/
 # Cursor (do not push)
 .cursor/
 
+# Static analysis workspace artifacts
+.cheburnexus/
+architecture-analyzer.json
+
 # TypeScript cache
 *.tsbuildinfo
 
