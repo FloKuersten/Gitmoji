@@ -20,6 +20,8 @@
     "typecheck": "npm --prefix extension run typecheck",
     "test": "npm --prefix extension test",
     "package": "npm --prefix extension run package",
+    "openvsx:check": "npm --prefix extension run openvsx:check",
+    "publish:ovsx": "npm --prefix extension run publish:ovsx",
     "install:extension": "npm --prefix extension install"
   },
   "engines": {

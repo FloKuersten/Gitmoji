@@ -11,6 +11,7 @@ Insert [Gitmojis](https://gitmoji.dev) into **Git commit messages** and **docstr
 
 <p align="center">
   <img src="https://img.shields.io/badge/VS%20Code-Compatible-007ACC?style=flat-square&logo=visualstudiocode&logoColor=white" alt="VS Code"/>
+  <img src="https://img.shields.io/badge/Open%20VSX-kuetech.auto--gitmoji--docs-blue?style=flat-square" alt="Open VSX"/>
   <img src="https://img.shields.io/badge/Cursor-Compatible-000000?style=flat-square" alt="Cursor"/>
   <img src="https://img.shields.io/badge/Offline-Yes-success?style=flat-square" alt="Offline"/>
   <img src="https://img.shields.io/badge/AI-No-red?style=flat-square" alt="No AI"/>
@@ -48,7 +49,7 @@ Insert [Gitmojis](https://gitmoji.dev) into **Git commit messages** and **docstr
 
 **✅ Yes.** Cursor uses the same VS Code extension host.
 
-1. Install from the **Visual Studio Marketplace** (search **Auto Gitmoji & Docs**)
+1. Install from [Open VSX](https://open-vsx.org/extension/kuetech/auto-gitmoji-docs) (search **Auto Gitmoji & Docs** in Cursor)
 2. Or install from a `.vsix` file
 3. Enable the built-in **Git** extension if commit formatting does nothing
 
@@ -167,7 +168,7 @@ npm run package   # builds .vsix
 
 ## 🚀 Publish
 
-Publisher: **kuetech** (KueTech Digital) — [PUBLISHING.md](./PUBLISHING.md)
+Publisher: **kuetech** (KueTech Digital). Open VSX first (Cursor), then optionally the VS Marketplace — [PUBLISHING.md](./PUBLISHING.md)
 
 ---
 

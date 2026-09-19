@@ -1,0 +1,73 @@
+name: Publish Open VSX
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-openvsx
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: extension
+
+jobs:
+  publish:
+    name: Publish to Open VSX
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: extension/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify Open VSX metadata
+        run: npm run openvsx:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Package VSIX
+        run: npm run package
+
+      - name: Require OVSX_PAT
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: |
+          if [ -z "$OVSX_PAT" ]; then
+            echo "Add repository secret OVSX_PAT from https://open-vsx.org/user-settings/tokens"
+            exit 1
+          fi
+
+      - name: Publish to Open VSX
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: npm run publish:ovsx
+
+      - name: Upload published VSIX
+        uses: actions/upload-artifact@v4
+        with:
+          name: auto-gitmoji-docs-openvsx
+          path: extension/*.vsix
+          if-no-files-found: error
+          retention-days: 30

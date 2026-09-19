@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/FloKuersten/Gitmoji/actions/workflows/ci.yml/badge.svg)](https://github.com/FloKuersten/Gitmoji/actions/workflows/ci.yml)
 [![Security](https://github.com/FloKuersten/Gitmoji/actions/workflows/security.yml/badge.svg)](https://github.com/FloKuersten/Gitmoji/actions/workflows/security.yml)
+[![Open VSX](https://img.shields.io/badge/Open%20VSX-kuetech.auto--gitmoji--docs-blue.svg)](https://open-vsx.org/extension/kuetech/auto-gitmoji-docs)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![GitHub](https://img.shields.io/github/stars/FloKuersten/Gitmoji?style=social)](https://github.com/FloKuersten/Gitmoji)
 
@@ -67,7 +68,7 @@ Then: **Extensions** → **⋯** → **Install from VSIX…**
 
 ✅ **Yes — fully supported.** Cursor uses the same extension host as VS Code.
 
-- Install from the Marketplace (after publish) or from a `.vsix`
+- Install from [Open VSX](https://open-vsx.org/extension/kuetech/auto-gitmoji-docs) after publish, or from a `.vsix`
 - Enable the built-in **Git** extension for commit formatting
 
 📖 Details: **[extension/PUBLISHING.md](extension/PUBLISHING.md)**
@@ -93,7 +94,7 @@ Gitmoji/
 | File | Purpose |
 |------|---------|
 | [extension/README.md](extension/README.md) | 📣 Marketplace listing (long form) |
-| [extension/PUBLISHING.md](extension/PUBLISHING.md) | 🚀 Publish to VS Marketplace |
+| [extension/PUBLISHING.md](extension/PUBLISHING.md) | 🚀 Publish to Open VSX and the VS Marketplace |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | 🤝 How to contribute |
 | [extension/CONTRIBUTING.md](extension/CONTRIBUTING.md) | 📋 Add new Gitmoji mappings |
 | [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | 💬 Community standards |
