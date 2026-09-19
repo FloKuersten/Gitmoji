@@ -2,9 +2,11 @@ import { describe, expect, it } from "vitest";
 import {
   getBuiltInMappings,
   isValidMapping,
+  mergeMappingLayers,
   mergeMappings,
 } from "../dictionary";
 import type { GitmojiMapping } from "../types";
+import { parseWorkspaceMappings } from "../workspaceMappings";
 
 describe("isValidMapping", () => {
   it("accepts a well-formed mapping", () => {
@@ -105,5 +107,61 @@ describe("mergeMappings", () => {
   it("does not mutate the built-in list", () => {
     mergeMappings(builtIn, [{ keywords: ["fix"], gitmoji: "🔨" }]);
     expect(builtIn[0].keywords).toEqual(["fix", "bug"]);
+  });
+});
+
+describe("mergeMappingLayers", () => {
+  it("applies later layers over earlier ones", () => {
+    const layers = mergeMappingLayers(
+      [{ keywords: ["fix"], gitmoji: "🐛" }],
+      [{ keywords: ["fix"], gitmoji: "🚑" }],
+      [{ keywords: ["fix"], gitmoji: "🔨" }]
+    );
+    expect(layers.find((m) => m.keywords.includes("fix"))?.gitmoji).toBe("🔨");
+  });
+
+  it("keeps keywords from earlier layers that were not overridden", () => {
+    const layers = mergeMappingLayers(
+      [
+        { keywords: ["fix", "bug"], gitmoji: "🐛" },
+        { keywords: ["feat"], gitmoji: "✨" },
+      ],
+      [{ keywords: ["fix"], gitmoji: "🔨" }]
+    );
+    expect(layers.find((m) => m.keywords.includes("bug"))?.gitmoji).toBe("🐛");
+    expect(layers.find((m) => m.keywords.includes("feat"))?.gitmoji).toBe("✨");
+  });
+});
+
+describe("parseWorkspaceMappings", () => {
+  it("accepts a mappings object", () => {
+    const parsed = parseWorkspaceMappings({
+      mappings: [{ keywords: ["ship"], gitmoji: "🚢" }],
+    });
+    expect(parsed).toHaveLength(1);
+    expect(parsed[0].gitmoji).toBe("🚢");
+  });
+
+  it("accepts customMappings and a bare array", () => {
+    expect(
+      parseWorkspaceMappings({
+        customMappings: [{ keywords: ["wip"], gitmoji: "🏗️" }],
+      })
+    ).toHaveLength(1);
+    expect(
+      parseWorkspaceMappings([{ keywords: ["wip"], gitmoji: "🏗️" }])
+    ).toHaveLength(1);
+  });
+
+  it("drops invalid entries", () => {
+    expect(
+      parseWorkspaceMappings({
+        mappings: [
+          { keywords: ["ok"], gitmoji: "✅" },
+          { keywords: [], gitmoji: "❌" },
+          { gitmoji: "❌" },
+        ],
+      })
+    ).toHaveLength(1);
   });
 });

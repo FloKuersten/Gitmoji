@@ -1,0 +1,11 @@
+{
+  "mappings": [
+    {
+      "keywords": ["ship", "launch"],
+      "gitmoji": "🚢",
+      "code": ":ship:",
+      "name": "ship",
+      "description": "Ship a release"
+    }
+  ]
+}

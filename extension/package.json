@@ -2,7 +2,7 @@
   "name": "auto-gitmoji-docs",
   "displayName": "Auto Gitmoji & Docs",
   "description": "Insert Gitmojis into commit messages and docstrings using a local dictionary — no AI, no network. By KueTech Digital.",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "publisher": "kuetech",
   "license": "MIT",
   "icon": "media/icon.png",
@@ -165,6 +165,16 @@
             "Insert the official shortcode (:bug:) — useful for GitLab and plain-text logs"
           ],
           "description": "Whether to insert a Unicode emoji or an official :shortcode:."
+        },
+        "autoGitmoji.autoMatch": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "When enabled, automatically insert a Gitmoji into the Source Control commit box once a conventional type is typed (`fix: …`). Off by default so it does not fight half-written messages."
+        },
+        "autoGitmoji.onlyCustomMappings": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Hide the bundled official dictionary and use only workspace / `customMappings` entries (for company icon sets)."
         },
         "autoGitmoji.position": {
           "type": "string",

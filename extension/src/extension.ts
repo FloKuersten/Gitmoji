@@ -1,8 +1,9 @@
 import * as vscode from "vscode";
+import { CommitAutoMatch } from "./autoMatch";
 import {
   getBuiltInMappings,
   isValidMapping,
-  mergeMappings,
+  mergeMappingLayers,
 } from "./dictionary";
 import { registerGitmojiCompletion } from "./completion";
 import {
@@ -21,12 +22,17 @@ import type {
   GitmojiOutputFormat,
   GitmojiPosition,
 } from "./types";
+import {
+  loadWorkspaceMappings,
+  watchWorkspaceMappingFiles,
+} from "./workspaceConfig";
 
 const WELCOME_KEY = "autoGitmoji.welcomeShown";
 const LAST_VERSION_KEY = "autoGitmoji.lastSeenVersion";
 const LEGACY_FOCUS_LOSS_KEY = "autoFormatCommitOnSave";
 
-let sortedMappings: GitmojiMapping[] = mergeMappings(getBuiltInMappings(), []);
+let sortedMappings: GitmojiMapping[] = mergeMappingLayers(getBuiltInMappings());
+let workspaceMappingSource: string | undefined;
 
 function getMappings(): GitmojiMapping[] {
   return sortedMappings;
@@ -75,24 +81,53 @@ function shouldFormatOnFocusLoss(): boolean {
   );
 }
 
-/**
- * Rebuilds the active dictionary from the bundled data plus any user-defined
- * mappings. Invalid user entries are reported once and skipped so a typo in
- * settings cannot disable the extension.
- */
-function loadDictionary(): void {
+function readSettingsMappings(): {
+  valid: GitmojiMapping[];
+  rejected: number;
+} {
   const configured = vscode.workspace
     .getConfiguration("autoGitmoji")
     .get<unknown[]>("customMappings", []);
 
   const custom = Array.isArray(configured) ? configured : [];
   const valid = custom.filter(isValidMapping);
-  sortedMappings = mergeMappings(getBuiltInMappings(), valid);
+  return { valid, rejected: custom.length - valid.length };
+}
 
-  const rejected = custom.length - valid.length;
-  if (rejected > 0) {
+/**
+ * Rebuilds the active dictionary: built-in → workspace file → settings.
+ * When `onlyCustomMappings` is on, the bundled list is skipped.
+ */
+async function loadDictionary(options?: {
+  quiet?: boolean;
+}): Promise<void> {
+  const config = vscode.workspace.getConfiguration("autoGitmoji");
+  const onlyCustom = config.get<boolean>("onlyCustomMappings", false);
+  const { valid: settingsMappings, rejected: settingsRejected } =
+    readSettingsMappings();
+  const workspace = await loadWorkspaceMappings();
+
+  const builtIn = onlyCustom ? [] : getBuiltInMappings();
+  sortedMappings = mergeMappingLayers(
+    builtIn,
+    workspace.mappings,
+    settingsMappings
+  );
+  workspaceMappingSource = workspace.source;
+
+  if (options?.quiet) {
+    return;
+  }
+
+  if (settingsRejected > 0) {
     vscode.window.showWarningMessage(
-      `Auto Gitmoji: ignored ${rejected} invalid entry in autoGitmoji.customMappings. Each entry needs a non-empty "gitmoji" and at least one "keywords" value.`
+      `Auto Gitmoji: ignored ${settingsRejected} invalid entry in autoGitmoji.customMappings. Each entry needs a non-empty "gitmoji" and at least one "keywords" value.`
+    );
+  }
+
+  if (workspace.rejected > 0 && workspace.source) {
+    vscode.window.showWarningMessage(
+      `Auto Gitmoji: ignored ${workspace.rejected} invalid entry in ${workspace.source}.`
     );
   }
 }
@@ -296,7 +331,8 @@ function registerOpenDictionaryCommand(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("autoGitmoji.openDictionary", async () => {
       const content = JSON.stringify(
         {
-          note: "Active mappings: bundled dictionary merged with autoGitmoji.customMappings. Edit the setting to override an entry.",
+          note: "Active mappings: built-in → workspace file (.vscode/auto-gitmoji.json or .gitmoji-map.json) → autoGitmoji.customMappings.",
+          workspaceSource: workspaceMappingSource ?? null,
           count: sortedMappings.length,
           mappings: sortedMappings,
         },
@@ -340,21 +376,39 @@ function registerAutoFormatOnBlur(context: vscode.ExtensionContext): void {
 }
 
 export function activate(context: vscode.ExtensionContext): void {
-  loadDictionary();
-
   const statusBar = new CommitStatusBar(getMappings, getOutputFormat);
-  context.subscriptions.push(statusBar);
-  statusBar.start();
+  const autoMatch = new CommitAutoMatch(
+    getMappings,
+    getPosition,
+    getOutputFormat
+  );
+  context.subscriptions.push(statusBar, autoMatch);
+
+  const reloadDictionary = async (quiet = false): Promise<void> => {
+    await loadDictionary({ quiet });
+    statusBar.refresh();
+  };
+
+  void reloadDictionary().then(() => {
+    statusBar.start();
+    autoMatch.start();
+  });
 
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration((event) => {
-      if (event.affectsConfiguration("autoGitmoji.customMappings")) {
-        loadDictionary();
-        statusBar.refresh();
+      if (
+        event.affectsConfiguration("autoGitmoji.customMappings") ||
+        event.affectsConfiguration("autoGitmoji.onlyCustomMappings")
+      ) {
+        void reloadDictionary();
       }
 
       if (event.affectsConfiguration("autoGitmoji.showStatusBar")) {
         statusBar.applyEnabledState();
+      }
+
+      if (event.affectsConfiguration("autoGitmoji.autoMatch")) {
+        autoMatch.applyEnabledState();
       }
 
       if (
@@ -363,6 +417,12 @@ export function activate(context: vscode.ExtensionContext): void {
       ) {
         statusBar.refresh();
       }
+    })
+  );
+
+  context.subscriptions.push(
+    watchWorkspaceMappingFiles(() => {
+      void reloadDictionary(true);
     })
   );
 

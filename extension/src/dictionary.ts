@@ -71,8 +71,29 @@ export function getBuiltInMappings(): GitmojiMapping[] {
 }
 
 /**
- * Merges user-defined entries over the built-in dictionary. Later entries win
- * for a given keyword, so a user mapping always overrides the bundled one.
+ * Merges mapping layers left-to-right. Later layers override earlier ones for
+ * any shared keyword. Empty layers are skipped.
+ *
+ * Typical order: built-in → workspace file → `customMappings`.
+ */
+export function mergeMappingLayers(
+  ...layers: GitmojiMapping[][]
+): GitmojiMapping[] {
+  let result: GitmojiMapping[] = [];
+  for (const layer of layers) {
+    if (!layer.length) {
+      continue;
+    }
+    result = mergeMappings(result, layer);
+  }
+  return result.length > 0
+    ? result
+    : loadSortedMappings({ version: 1, mappings: [] });
+}
+
+/**
+ * Merges user-defined entries over a base dictionary. Later entries win for a
+ * given keyword, so a user mapping always overrides the bundled one.
  */
 export function mergeMappings(
   builtIn: GitmojiMapping[],

@@ -167,6 +167,34 @@ export function formatCommitMessage(
   );
 }
 
+/**
+ * True when the message already has a conventional type + colon, so as-you-type
+ * auto-match can apply without guessing from a half-typed first word.
+ */
+export function isAutoMatchCandidate(message: string): boolean {
+  const trimmed = message.trim();
+  if (!trimmed || hasLeadingGitmoji(trimmed)) {
+    return false;
+  }
+  return CONVENTIONAL_PREFIX.test(trimmed);
+}
+
+/**
+ * Formats a commit message only when it is an unambiguous auto-match candidate.
+ * Returns the original string when auto-match should not rewrite.
+ */
+export function autoFormatCommitMessage(
+  message: string,
+  mappings: GitmojiMapping[],
+  position: GitmojiPosition = "prefix",
+  outputFormat: GitmojiOutputFormat = "emoji"
+): string {
+  if (!isAutoMatchCandidate(message)) {
+    return message;
+  }
+  return formatCommitMessage(message, mappings, position, outputFormat);
+}
+
 function splitCommentMarker(text: string): { marker: string; body: string } {
   for (const pattern of DOCSTRING_MARKERS) {
     const match = text.match(pattern);

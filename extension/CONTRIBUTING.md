@@ -42,7 +42,8 @@ Example:
 2. **Docstrings** — The first non-empty line of the selection is the summary line. The emoji is inserted after the comment marker, so `// fix parser` becomes `// 🐛 fix parser`.
 3. **No duplicate emoji / shortcode** — If the line's content already starts with an emoji or an official `:shortcode:`, nothing is inserted.
 4. **Longest keyword wins** — When multiple entries could match, the entry with the longest keyword takes priority (sorted automatically in code).
-5. **User mappings win** — Entries from `autoGitmoji.customMappings` override bundled entries for the same keyword.
+5. **User mappings win** — Merge order is built-in → `.vscode/auto-gitmoji.json` / `.gitmoji-map.json` → `autoGitmoji.customMappings`. Later layers override earlier keywords.
+6. **Team files** — Prefer a committed `.vscode/auto-gitmoji.json` when the whole repo should share mappings.
 
 ### Pull request checklist
 

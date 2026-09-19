@@ -2,6 +2,14 @@
 
 All releases by **KueTech Digital** — [kuetech.at](https://kuetech.at)
 
+## 1.3.0
+
+### Added
+
+- `autoGitmoji.autoMatch` (off by default): as-you-type insert in the Source Control box once a conventional type is present (`fix: …`)
+- Project-local mapping files: `.vscode/auto-gitmoji.json` or `.gitmoji-map.json` (merge order: built-in → workspace file → `customMappings`)
+- `autoGitmoji.onlyCustomMappings` to hide the bundled official list for company icon sets
+
 ## 1.2.0
 
 ### Added

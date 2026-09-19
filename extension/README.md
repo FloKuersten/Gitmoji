@@ -26,6 +26,8 @@ Insert [Gitmojis](https://gitmoji.dev) into **Git commit messages** and **docstr
 | **Offline matching** | 📋 | ~75 official gitmoji entries in `data/gitmoji-map.json` + regex — `fix` → 🐛, `feat` → ✨, `docs` → 📝 |
 | **Shortcodes** | 🏷️ | `autoGitmoji.outputFormat`: emoji (`🐛`) or code (`:bug:`) for GitLab / plain logs |
 | **SCM IntelliSense** | ⌨️ | Type `:` in the commit box for local colon completion (`:bug`, `:memo`, …) |
+| **As-you-type auto-match** | ⚡ | Optional (`autoGitmoji.autoMatch`) — inserts once you type `fix: …` |
+| **Project mappings** | 📁 | `.vscode/auto-gitmoji.json` or `.gitmoji-map.json` for team-shared keywords |
 | **Custom mappings** | 🧩 | Override or extend the dictionary from your settings |
 | **Status bar hint** | 👀 | See the emoji before applying it; click to insert |
 | **Format commit** | 💬 | Git SCM input box — one command |
@@ -100,6 +102,8 @@ Supports **Conventional Commits**: `type(scope): message` and simple `type: mess
 |---------|---------|-------------|
 | `autoGitmoji.customMappings` | `[]` | 🧩 Your own keyword-to-emoji entries |
 | `autoGitmoji.outputFormat` | `emoji` | Insert Unicode emoji (`🐛`) or shortcode (`:bug:`) |
+| `autoGitmoji.autoMatch` | `false` | As-you-type insert once a conventional type is typed (`fix: …`) |
+| `autoGitmoji.onlyCustomMappings` | `false` | Hide the bundled dictionary (company icon sets) |
 | `autoGitmoji.position` | `prefix` | Emoji at the start, or after the commit type |
 | `autoGitmoji.showStatusBar` | `true` | Show the suggested emoji in the status bar |
 | `autoGitmoji.formatOnFocusLoss` | `false` | Format the commit box when the window loses focus |
@@ -110,6 +114,29 @@ Supports **Conventional Commits**: `type(scope): message` and simple `type: mess
 ### ⌨️ SCM colon completion
 
 In the **Source Control** commit message box (or a `COMMIT_EDITMSG` file), type `:` to open IntelliSense backed by the local dictionary. Filter with `:bug`, `:memo`, `:ambulance`, or a keyword alias like `:docs`. Inserted text follows `autoGitmoji.outputFormat`.
+
+### 📁 Project-local mappings
+
+Commit a shared dictionary for the team (no per-user settings). First file found wins:
+
+1. `.vscode/auto-gitmoji.json`
+2. `.gitmoji-map.json`
+
+```json
+{
+  "mappings": [
+    {
+      "keywords": ["ship", "launch"],
+      "gitmoji": "🚢",
+      "code": ":ship:",
+      "name": "ship",
+      "description": "Ship it"
+    }
+  ]
+}
+```
+
+Merge order: **built-in → workspace file → `autoGitmoji.customMappings`**.
 
 ### 🧩 Custom mappings
 

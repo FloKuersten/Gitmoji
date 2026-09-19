@@ -8,6 +8,8 @@ import {
   formatDocstringLine,
   formatToken,
   hasLeadingGitmoji,
+  isAutoMatchCandidate,
+  autoFormatCommitMessage,
   loadSortedMappings,
   matchGitmoji,
 } from "../gitmojiMatcher";
@@ -239,6 +241,26 @@ describe("matchGitmoji", () => {
 
   it("returns null for an unknown keyword", () => {
     expect(matchGitmoji("banana", mappings)).toBeNull();
+  });
+});
+
+describe("isAutoMatchCandidate / autoFormatCommitMessage", () => {
+  it("requires a conventional type with a colon", () => {
+    expect(isAutoMatchCandidate("fix: crash")).toBe(true);
+    expect(isAutoMatchCandidate("feat(api): add")).toBe(true);
+    expect(isAutoMatchCandidate("fix crash")).toBe(false);
+    expect(isAutoMatchCandidate("fix")).toBe(false);
+    expect(isAutoMatchCandidate("🐛 fix: crash")).toBe(false);
+  });
+
+  it("auto-formats only unambiguous conventional messages", () => {
+    expect(autoFormatCommitMessage("fix: crash", mappings)).toBe(
+      "🐛 fix: crash"
+    );
+    expect(autoFormatCommitMessage("fix crash", mappings)).toBe("fix crash");
+    expect(
+      autoFormatCommitMessage("fix: crash", mappings, "prefix", "code")
+    ).toBe(":bug: fix: crash");
   });
 });
 
