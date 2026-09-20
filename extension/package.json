@@ -143,8 +143,16 @@
                 "description": "Optional label shown in the Gitmoji picker."
               },
               "semver": {
-                "type": ["string", "null"],
-                "enum": ["major", "minor", "patch", null],
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "enum": [
+                  "major",
+                  "minor",
+                  "patch",
+                  null
+                ],
                 "description": "Optional semver impact from the official gitmoji list."
               }
             },
@@ -164,7 +172,10 @@
         "autoGitmoji.outputFormat": {
           "type": "string",
           "default": "emoji",
-          "enum": ["emoji", "code"],
+          "enum": [
+            "emoji",
+            "code"
+          ],
           "enumDescriptions": [
             "Insert the Unicode emoji (🐛)",
             "Insert the official shortcode (:bug:) — useful for GitLab and plain-text logs"

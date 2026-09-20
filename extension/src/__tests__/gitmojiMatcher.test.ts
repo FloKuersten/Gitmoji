@@ -411,11 +411,20 @@ describe("bundled dictionary", () => {
 describe("advanced emojis matching", () => {
   it.each([
     ["ai: implement RAG agent", "🤖 ai: implement RAG agent"],
-    ["prompt: optimize system instructions", "🤖 prompt: optimize system instructions"],
+    [
+      "prompt: optimize system instructions",
+      "🤖 prompt: optimize system instructions",
+    ],
     ["agent: add autonomous execution", "🤖 agent: add autonomous execution"],
     ["plugin: support neovim lua", "🧩 plugin: support neovim lua"],
-    ["monorepo: configure pnpm workspaces", "🗂️ monorepo: configure pnpm workspaces"],
-    ["audit: fix vulnerability in dependencies", "🛡️ audit: fix vulnerability in dependencies"],
+    [
+      "monorepo: configure pnpm workspaces",
+      "🗂️ monorepo: configure pnpm workspaces",
+    ],
+    [
+      "audit: fix vulnerability in dependencies",
+      "🛡️ audit: fix vulnerability in dependencies",
+    ],
     ["codegen: generate api types", "🪄 codegen: generate api types"],
     ["mcp: connect weather server", "🔌 mcp: connect weather server"],
     ["tidy: clean up dead exports", "🧹 tidy: clean up dead exports"],
@@ -439,27 +448,27 @@ describe("scope-aware matching", () => {
     expect(formatCommitMessage("chore(deps): bump vite", mappings)).toBe(
       "⬆️ chore(deps): bump vite"
     );
-    expect(formatCommitMessage("chore(ai): add prompt template", mappings)).toBe(
-      "🤖 chore(ai): add prompt template"
-    );
+    expect(
+      formatCommitMessage("chore(ai): add prompt template", mappings)
+    ).toBe("🤖 chore(ai): add prompt template");
     expect(formatCommitMessage("chore(docs): update api guide", mappings)).toBe(
       "📝 chore(docs): update api guide"
     );
-    expect(formatCommitMessage("chore(security): upgrade openvpn", mappings)).toBe(
-      "🔒️ chore(security): upgrade openvpn"
-    );
+    expect(
+      formatCommitMessage("chore(security): upgrade openvpn", mappings)
+    ).toBe("🔒️ chore(security): upgrade openvpn");
     expect(formatCommitMessage("chore(test): add e2e suite", mappings)).toBe(
       "🧪 chore(test): add e2e suite"
     );
-    expect(formatCommitMessage("chore(i18n): add german translation", mappings)).toBe(
-      "🌐 chore(i18n): add german translation"
-    );
+    expect(
+      formatCommitMessage("chore(i18n): add german translation", mappings)
+    ).toBe("🌐 chore(i18n): add german translation");
   });
 
   it("preserves specific type over scope when type is already specific", () => {
-    expect(formatCommitMessage("feat(auth): add biometric login", mappings)).toBe(
-      "✨ feat(auth): add biometric login"
-    );
+    expect(
+      formatCommitMessage("feat(auth): add biometric login", mappings)
+    ).toBe("✨ feat(auth): add biometric login");
     expect(formatCommitMessage("fix(api): handle timeout", mappings)).toBe(
       "🐛 fix(api): handle timeout"
     );
@@ -467,7 +476,13 @@ describe("scope-aware matching", () => {
 
   it("can disable scope matching when requested", () => {
     expect(
-      formatCommitMessage("chore(deps): bump vite", mappings, "prefix", "emoji", false)
+      formatCommitMessage(
+        "chore(deps): bump vite",
+        mappings,
+        "prefix",
+        "emoji",
+        false
+      )
     ).toBe("🔧 chore(deps): bump vite");
   });
 });
@@ -496,4 +511,3 @@ describe("categories and search helpers", () => {
     expect(results.some((m) => m.name === "robot")).toBe(true);
   });
 });
-

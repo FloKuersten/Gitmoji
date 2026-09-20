@@ -106,9 +106,7 @@ function readSettingsMappings(): {
  * Rebuilds the active dictionary: built-in → workspace file → settings.
  * When `onlyCustomMappings` is on, the bundled list is skipped.
  */
-async function loadDictionary(options?: {
-  quiet?: boolean;
-}): Promise<void> {
+async function loadDictionary(options?: { quiet?: boolean }): Promise<void> {
   const config = vscode.workspace.getConfiguration("autoGitmoji");
   const onlyCustom = config.get<boolean>("onlyCustomMappings", false);
   const { valid: settingsMappings, rejected: settingsRejected } =
@@ -302,11 +300,17 @@ function registerInsertPickerCommand(
         const token = formatToken(m, outputFormat);
         const categoryBadge = m.category ? `[${m.category}] ` : "";
         const semverText = m.semver ? ` · ${m.semver}` : "";
-        const desc = m.description ? `${m.description}${semverText}` : (m.semver ? m.semver : "");
+        const desc = m.description
+          ? `${m.description}${semverText}`
+          : m.semver
+            ? m.semver
+            : "";
         return {
           label: `${m.gitmoji} ${m.name ?? m.keywords[0]}`,
           description: `${categoryBadge}${desc}`,
-          detail: [m.code, m.category, ...m.keywords].filter(Boolean).join(", "),
+          detail: [m.code, m.category, ...m.keywords]
+            .filter(Boolean)
+            .join(", "),
           token,
         };
       });
@@ -395,7 +399,8 @@ function registerInstallGitHookCommand(context: vscode.ExtensionContext): void {
         [
           {
             label: "$(git-merge) Install Hook in Current Repository",
-            description: "Auto-formats commit messages in VS Code, JetBrains, Visual Studio, Neovim, etc.",
+            description:
+              "Auto-formats commit messages in VS Code, JetBrains, Visual Studio, Neovim, etc.",
             target: "repo",
           },
           {
@@ -413,20 +418,31 @@ function registerInstallGitHookCommand(context: vscode.ExtensionContext): void {
 
       const isGlobal = choice.target === "global";
       const folders = vscode.workspace.workspaceFolders;
-      const cwd = (!isGlobal && folders && folders.length > 0)
-        ? folders[0].uri.fsPath
-        : undefined;
+      const cwd =
+        !isGlobal && folders && folders.length > 0
+          ? folders[0].uri.fsPath
+          : undefined;
 
       try {
-        const cliPath = path.resolve(context.extensionPath, "..", "cli", "bin", "auto-gitmoji.js");
-        const cmd = isGlobal ? `node "${cliPath}" hook install --global` : `node "${cliPath}" hook install`;
+        const cliPath = path.resolve(
+          context.extensionPath,
+          "..",
+          "cli",
+          "bin",
+          "auto-gitmoji.js"
+        );
+        const cmd = isGlobal
+          ? `node "${cliPath}" hook install --global`
+          : `node "${cliPath}" hook install`;
         execSync(cmd, { cwd });
         vscode.window.showInformationMessage(
           `Auto Gitmoji: Git hook installed successfully! ${isGlobal ? "(Global)" : "(Repository)"}`
         );
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : String(err);
-        vscode.window.showErrorMessage(`Auto Gitmoji: Failed to install hook: ${msg}`);
+        vscode.window.showErrorMessage(
+          `Auto Gitmoji: Failed to install hook: ${msg}`
+        );
       }
     })
   );

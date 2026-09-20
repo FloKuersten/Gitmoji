@@ -1,8 +1,5 @@
 import * as vscode from "vscode";
-import {
-  filterMappingsForCompletion,
-  formatToken,
-} from "./gitmojiMatcher";
+import { filterMappingsForCompletion, formatToken } from "./gitmojiMatcher";
 import type { GitmojiMapping, GitmojiOutputFormat } from "./types";
 
 /**

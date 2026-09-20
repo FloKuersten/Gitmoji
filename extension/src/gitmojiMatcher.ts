@@ -142,7 +142,14 @@ export function matchGitmoji(
     if (scope) {
       const scopeMapping = findMapping(scope, mappings);
       if (scopeMapping) {
-        const genericTypes = new Set(["chore", "build", "ci", "misc", "other", "repo"]);
+        const genericTypes = new Set([
+          "chore",
+          "build",
+          "ci",
+          "misc",
+          "other",
+          "repo",
+        ]);
         if (!typeMapping || genericTypes.has(keyword.toLowerCase())) {
           return scopeMapping;
         }
@@ -191,11 +198,7 @@ export function formatCommitMessage(
     return message;
   }
 
-  return applyPosition(
-    trimmed,
-    formatToken(mapping, outputFormat),
-    position
-  );
+  return applyPosition(trimmed, formatToken(mapping, outputFormat), position);
 }
 
 /**
@@ -224,7 +227,13 @@ export function autoFormatCommitMessage(
   if (!isAutoMatchCandidate(message)) {
     return message;
   }
-  return formatCommitMessage(message, mappings, position, outputFormat, enableScopeMatching);
+  return formatCommitMessage(
+    message,
+    mappings,
+    position,
+    outputFormat,
+    enableScopeMatching
+  );
 }
 
 function splitCommentMarker(text: string): { marker: string; body: string } {
