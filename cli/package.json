@@ -1,0 +1,31 @@
+{
+  "name": "auto-gitmoji",
+  "version": "1.4.0",
+  "description": "Universal Gitmoji engine & Git hook for all IDEs — VS Code, JetBrains, Neovim, Sublime, Visual Studio, Terminal.",
+  "bin": {
+    "auto-gitmoji": "./bin/auto-gitmoji.js"
+  },
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "node ./bin/auto-gitmoji.js --help"
+  },
+  "keywords": [
+    "gitmoji",
+    "git-hook",
+    "ide",
+    "vscode",
+    "intellij",
+    "jetbrains",
+    "neovim",
+    "sublime",
+    "conventional-commits"
+  ],
+  "author": {
+    "name": "KueTech Digital",
+    "url": "https://kuetech.at"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

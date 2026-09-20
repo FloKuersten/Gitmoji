@@ -107,9 +107,24 @@ export function extractCommitKeyword(message: string): string | null {
   return firstWord || null;
 }
 
+export function extractCommitScope(message: string): string | null {
+  const trimmed = message.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  const conventional = trimmed.match(CONVENTIONAL_PREFIX);
+  if (conventional && conventional[2]) {
+    return conventional[2].replace(/^\(|\)$/g, "").trim();
+  }
+
+  return null;
+}
+
 export function matchGitmoji(
   text: string,
-  mappings: GitmojiMapping[]
+  mappings: GitmojiMapping[],
+  enableScopeMatching: boolean = true
 ): GitmojiMapping | null {
   if (hasLeadingGitmoji(text)) {
     return null;
@@ -120,7 +135,22 @@ export function matchGitmoji(
     return null;
   }
 
-  return findMapping(keyword, mappings) ?? null;
+  const typeMapping = findMapping(keyword, mappings);
+
+  if (enableScopeMatching) {
+    const scope = extractCommitScope(text);
+    if (scope) {
+      const scopeMapping = findMapping(scope, mappings);
+      if (scopeMapping) {
+        const genericTypes = new Set(["chore", "build", "ci", "misc", "other", "repo"]);
+        if (!typeMapping || genericTypes.has(keyword.toLowerCase())) {
+          return scopeMapping;
+        }
+      }
+    }
+  }
+
+  return typeMapping ?? null;
 }
 
 /**
@@ -148,14 +178,15 @@ export function formatCommitMessage(
   message: string,
   mappings: GitmojiMapping[],
   position: GitmojiPosition = "prefix",
-  outputFormat: GitmojiOutputFormat = "emoji"
+  outputFormat: GitmojiOutputFormat = "emoji",
+  enableScopeMatching: boolean = true
 ): string {
   const trimmed = message.trim();
   if (!trimmed || hasLeadingGitmoji(trimmed)) {
     return message;
   }
 
-  const mapping = matchGitmoji(trimmed, mappings);
+  const mapping = matchGitmoji(trimmed, mappings, enableScopeMatching);
   if (!mapping) {
     return message;
   }
@@ -187,12 +218,13 @@ export function autoFormatCommitMessage(
   message: string,
   mappings: GitmojiMapping[],
   position: GitmojiPosition = "prefix",
-  outputFormat: GitmojiOutputFormat = "emoji"
+  outputFormat: GitmojiOutputFormat = "emoji",
+  enableScopeMatching: boolean = true
 ): string {
   if (!isAutoMatchCandidate(message)) {
     return message;
   }
-  return formatCommitMessage(message, mappings, position, outputFormat);
+  return formatCommitMessage(message, mappings, position, outputFormat, enableScopeMatching);
 }
 
 function splitCommentMarker(text: string): { marker: string; body: string } {
@@ -262,8 +294,8 @@ export function formatDocstringBlock(
 }
 
 /**
- * Finds mappings whose keywords, name, or shortcode match a typed filter
- * (without surrounding colons). Used by SCM colon completion.
+ * Finds mappings whose keywords, name, shortcode, or category match a typed filter
+ * (without surrounding colons). Used by SCM colon completion and search.
  */
 export function filterMappingsForCompletion(
   filter: string,
@@ -284,8 +316,30 @@ export function filterMappingsForCompletion(
     if (mapping.description?.toLowerCase().includes(needle)) {
       return true;
     }
+    if (mapping.category?.toLowerCase().includes(needle)) {
+      return true;
+    }
     return mapping.keywords.some((keyword) =>
       keyword.toLowerCase().includes(needle)
     );
   });
+}
+
+export function getCategoryList(mappings: GitmojiMapping[]): string[] {
+  const categories = new Set<string>();
+  for (const m of mappings) {
+    if (m.category) {
+      categories.add(m.category);
+    }
+  }
+  return Array.from(categories).sort();
+}
+
+export function getMappingsByCategory(
+  category: string,
+  mappings: GitmojiMapping[]
+): GitmojiMapping[] {
+  return mappings.filter(
+    (m) => m.category?.toLowerCase() === category.toLowerCase()
+  );
 }

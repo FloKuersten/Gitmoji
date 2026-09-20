@@ -2,11 +2,14 @@ import { describe, expect, it } from "vitest";
 import dictionary from "../../data/gitmoji-map.json";
 import {
   extractCommitKeyword,
+  extractCommitScope,
   filterMappingsForCompletion,
   formatCommitMessage,
   formatDocstringBlock,
   formatDocstringLine,
   formatToken,
+  getCategoryList,
+  getMappingsByCategory,
   hasLeadingGitmoji,
   isAutoMatchCandidate,
   autoFormatCommitMessage,
@@ -395,4 +398,102 @@ describe("bundled dictionary", () => {
       expect(hasLeadingGitmoji(mapping.gitmoji)).toBe(true);
     }
   });
+
+  it("exposes category on every entry", () => {
+    for (const mapping of mappings) {
+      expect(mapping.category).toBeDefined();
+      expect(typeof mapping.category).toBe("string");
+      expect(mapping.category!.length).toBeGreaterThan(0);
+    }
+  });
 });
+
+describe("advanced emojis matching", () => {
+  it.each([
+    ["ai: implement RAG agent", "🤖 ai: implement RAG agent"],
+    ["prompt: optimize system instructions", "🤖 prompt: optimize system instructions"],
+    ["agent: add autonomous execution", "🤖 agent: add autonomous execution"],
+    ["plugin: support neovim lua", "🧩 plugin: support neovim lua"],
+    ["monorepo: configure pnpm workspaces", "🗂️ monorepo: configure pnpm workspaces"],
+    ["audit: fix vulnerability in dependencies", "🛡️ audit: fix vulnerability in dependencies"],
+    ["codegen: generate api types", "🪄 codegen: generate api types"],
+    ["mcp: connect weather server", "🔌 mcp: connect weather server"],
+    ["tidy: clean up dead exports", "🧹 tidy: clean up dead exports"],
+    ["sync: rebase on main branch", "🔄 sync: rebase on main branch"],
+    ["dashboard: add latency metrics", "📊 dashboard: add latency metrics"],
+    ["dart: strict null assertion", "🎯 dart: strict null assertion"],
+  ])("formats %s with advanced gitmoji", (input, expected) => {
+    expect(formatCommitMessage(input, mappings)).toBe(expected);
+  });
+});
+
+describe("scope-aware matching", () => {
+  it("extracts conventional scope accurately", () => {
+    expect(extractCommitScope("chore(deps): bump vite")).toBe("deps");
+    expect(extractCommitScope("feat(auth)!: add sso")).toBe("auth");
+    expect(extractCommitScope("fix: bug")).toBeNull();
+    expect(extractCommitScope("not conventional")).toBeNull();
+  });
+
+  it("prioritizes specific scope over generic chore or build types", () => {
+    expect(formatCommitMessage("chore(deps): bump vite", mappings)).toBe(
+      "⬆️ chore(deps): bump vite"
+    );
+    expect(formatCommitMessage("chore(ai): add prompt template", mappings)).toBe(
+      "🤖 chore(ai): add prompt template"
+    );
+    expect(formatCommitMessage("chore(docs): update api guide", mappings)).toBe(
+      "📝 chore(docs): update api guide"
+    );
+    expect(formatCommitMessage("chore(security): upgrade openvpn", mappings)).toBe(
+      "🔒️ chore(security): upgrade openvpn"
+    );
+    expect(formatCommitMessage("chore(test): add e2e suite", mappings)).toBe(
+      "🧪 chore(test): add e2e suite"
+    );
+    expect(formatCommitMessage("chore(i18n): add german translation", mappings)).toBe(
+      "🌐 chore(i18n): add german translation"
+    );
+  });
+
+  it("preserves specific type over scope when type is already specific", () => {
+    expect(formatCommitMessage("feat(auth): add biometric login", mappings)).toBe(
+      "✨ feat(auth): add biometric login"
+    );
+    expect(formatCommitMessage("fix(api): handle timeout", mappings)).toBe(
+      "🐛 fix(api): handle timeout"
+    );
+  });
+
+  it("can disable scope matching when requested", () => {
+    expect(
+      formatCommitMessage("chore(deps): bump vite", mappings, "prefix", "emoji", false)
+    ).toBe("🔧 chore(deps): bump vite");
+  });
+});
+
+describe("categories and search helpers", () => {
+  it("lists all distinct sorted categories", () => {
+    const categories = getCategoryList(mappings);
+    expect(categories).toContain("Data, AI & Analytics");
+    expect(categories).toContain("Security & Auth");
+    expect(categories).toContain("DevOps & CI/CD");
+    expect(categories).toContain("Features");
+    expect(categories).toContain("Fixes & Bugs");
+    expect(categories).toContain("Performance");
+    expect(categories).toContain("Testing");
+  });
+
+  it("filters mappings by category", () => {
+    const aiCategory = getMappingsByCategory("Data, AI & Analytics", mappings);
+    expect(aiCategory.some((m) => m.name === "robot")).toBe(true);
+    expect(aiCategory.some((m) => m.name === "card-file-box")).toBe(true);
+  });
+
+  it("matches category in search filter", () => {
+    const results = filterMappingsForCompletion("Analytics", mappings);
+    expect(results.length).toBeGreaterThan(0);
+    expect(results.some((m) => m.name === "robot")).toBe(true);
+  });
+});
+

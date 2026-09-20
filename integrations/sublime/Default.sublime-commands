@@ -1,0 +1,10 @@
+[
+  {
+    "caption": "Auto Gitmoji: Format Commit Message",
+    "command": "auto_gitmoji_format"
+  },
+  {
+    "caption": "Auto Gitmoji: Pick and Insert Gitmoji",
+    "command": "auto_gitmoji_pick"
+  }
+]

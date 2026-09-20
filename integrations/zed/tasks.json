@@ -1,0 +1,14 @@
+[
+  {
+    "label": "Auto Gitmoji: Format Selection",
+    "command": "auto-gitmoji format \"$ZED_SELECTED_TEXT\"",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false
+  },
+  {
+    "label": "Auto Gitmoji: Install Git Hook",
+    "command": "auto-gitmoji hook install",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false
+  }
+]

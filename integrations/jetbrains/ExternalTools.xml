@@ -1,0 +1,9 @@
+<toolSet name="Auto Gitmoji">
+  <tool name="Auto Gitmoji Format" description="Format commit message or text with Auto Gitmoji" showInMainMenu="true" showInEditor="true" showInProject="false" showInSearchPopup="false" disabled="false" useConsole="true" showConsoleOnStdOut="false" showConsoleOnStdErr="true" synchronizeAfterRun="true">
+    <exec>
+      <option name="COMMAND" value="npx" />
+      <option name="PARAMETERS" value="auto-gitmoji format &quot;$SelectedText$&quot;" />
+      <option name="WORKING_DIRECTORY" value="$ProjectFileDir$" />
+    </exec>
+  </tool>
+</toolSet>

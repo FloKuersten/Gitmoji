@@ -1,0 +1,24 @@
+#!/bin/sh
+# ✨ Auto Gitmoji Universal Git Hook
+# Formats commit messages automatically across all IDEs and tools
+# Compatible with VS Code, Cursor, JetBrains, Visual Studio, Xcode, Neovim, Sublime, Terminal, etc.
+
+COMMIT_MSG_FILE="$1"
+COMMIT_SOURCE="$2"
+SHA1="$3"
+
+# Do not format merge or squash commits generated automatically by Git
+if [ "$COMMIT_SOURCE" = "merge" ] || [ "$COMMIT_SOURCE" = "squash" ]; then
+  exit 0
+fi
+
+if [ -f "$COMMIT_MSG_FILE" ]; then
+  # Try using locally installed auto-gitmoji or npx
+  if command -v auto-gitmoji >/dev/null 2>&1; then
+    auto-gitmoji hook run "$COMMIT_MSG_FILE"
+  elif command -v npx >/dev/null 2>&1; then
+    npx --no-install auto-gitmoji hook run "$COMMIT_MSG_FILE" >/dev/null 2>&1 || true
+  fi
+fi
+
+exit 0

@@ -1,0 +1,118 @@
+<templateSet group="Gitmoji">
+  <template name="gfeat" value="✨ feat($SCOPE$): $DESC$" description="✨ Introduce new features" toReformat="false" toShortenFQNames="true">
+    <variable name="SCOPE" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="DESC" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="gfix" value="🐛 fix($SCOPE$): $DESC$" description="🐛 Fix a bug" toReformat="false" toShortenFQNames="true">
+    <variable name="SCOPE" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="DESC" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="gdocs" value="📝 docs($SCOPE$): $DESC$" description="📝 Add or update documentation" toReformat="false" toShortenFQNames="true">
+    <variable name="SCOPE" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="DESC" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="gstyle" value="🎨 style($SCOPE$): $DESC$" description="🎨 Improve structure / format of code" toReformat="false" toShortenFQNames="true">
+    <variable name="SCOPE" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="DESC" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="grefactor" value="♻️ refactor($SCOPE$): $DESC$" description="♻️ Refactor code" toReformat="false" toShortenFQNames="true">
+    <variable name="SCOPE" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="DESC" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="gperf" value="⚡️ perf($SCOPE$): $DESC$" description="⚡️ Improve performance" toReformat="false" toShortenFQNames="true">
+    <variable name="SCOPE" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="DESC" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="gtest" value="🧪 test($SCOPE$): $DESC$" description="🧪 Add or update tests" toReformat="false" toShortenFQNames="true">
+    <variable name="SCOPE" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="DESC" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="gchore" value="🔧 chore($SCOPE$): $DESC$" description="🔧 Maintenance or tooling chore" toReformat="false" toShortenFQNames="true">
+    <variable name="SCOPE" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="DESC" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="gdeps" value="⬆️ chore(deps): bump $PACKAGE$ to $VERSION$" description="⬆️ Upgrade dependencies" toReformat="false" toShortenFQNames="true">
+    <variable name="PACKAGE" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="VERSION" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="gai" value="🤖 ai($SCOPE$): $DESC$" description="🤖 AI, LLM prompts &amp; agent workflows" toReformat="false" toShortenFQNames="true">
+    <variable name="SCOPE" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="DESC" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="gsec" value="🔒️ sec($SCOPE$): $DESC$" description="🔒️ Security &amp; privacy fixes" toReformat="false" toShortenFQNames="true">
+    <variable name="SCOPE" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="DESC" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="gci" value="👷 ci($SCOPE$): $DESC$" description="👷 CI/CD build system or workflow" toReformat="false" toShortenFQNames="true">
+    <variable name="SCOPE" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="DESC" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="grelease" value="🚀 release: v$VERSION$" description="🚀 Deploy or release software" toReformat="false" toShortenFQNames="true">
+    <variable name="VERSION" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="grevert" value="⏪️ revert: $COMMIT$" description="⏪️ Revert changes" toReformat="false" toShortenFQNames="true">
+    <variable name="COMMIT" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="gmonorepo" value="🗂️ monorepo($WORKSPACE$): $DESC$" description="🗂️ Monorepo and workspace updates" toReformat="false" toShortenFQNames="true">
+    <variable name="WORKSPACE" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="DESC" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="gmcp" value="🔌 mcp($SERVER$): $DESC$" description="🔌 Model Context Protocol or webhook integration" toReformat="false" toShortenFQNames="true">
+    <variable name="SERVER" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="DESC" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="gclean" value="🧹 chore(hygiene): $DESC$" description="🧹 Code hygiene and tidy up" toReformat="false" toShortenFQNames="true">
+    <variable name="DESC" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+</templateSet>

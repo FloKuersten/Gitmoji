@@ -14,6 +14,8 @@ export interface GitmojiMapping {
   /** Official gitmoji name without colons, e.g. `bug`. */
   name?: string;
   description?: string;
+  category?: string;
+  tags?: string[];
   semver?: GitmojiSemver | null;
 }
 
