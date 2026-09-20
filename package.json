@@ -22,7 +22,10 @@
     "package": "npm --prefix extension run package",
     "openvsx:check": "npm --prefix extension run openvsx:check",
     "publish:ovsx": "npm --prefix extension run publish:ovsx",
-    "install:extension": "npm --prefix extension install"
+    "install:extension": "npm --prefix extension install",
+    "cli": "node cli/bin/auto-gitmoji.js",
+    "hook:install": "node cli/bin/auto-gitmoji.js hook install",
+    "hook:uninstall": "node cli/bin/auto-gitmoji.js hook uninstall"
   },
   "engines": {
     "node": ">=20"

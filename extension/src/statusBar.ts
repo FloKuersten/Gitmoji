@@ -16,6 +16,7 @@ const POLL_INTERVAL_MS = 2000;
 export class CommitStatusBar {
   private readonly item: vscode.StatusBarItem;
   private timer: ReturnType<typeof setInterval> | undefined;
+  private lastMessage: string | undefined;
   private getMappings: () => GitmojiMapping[];
   private getOutputFormat: () => GitmojiOutputFormat;
   private getEnableScopeMatching: () => boolean;
@@ -78,7 +79,11 @@ export class CommitStatusBar {
     }
     this.lastMessage = message;
 
-    const mapping = matchGitmoji(message, this.getMappings());
+    const mapping = matchGitmoji(
+      message,
+      this.getMappings(),
+      this.getEnableScopeMatching()
+    );
     if (!mapping) {
       this.item.hide();
       return;

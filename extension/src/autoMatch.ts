@@ -25,7 +25,8 @@ export class CommitAutoMatch implements vscode.Disposable {
   constructor(
     private readonly getMappings: () => GitmojiMapping[],
     private readonly getPosition: () => GitmojiPosition,
-    private readonly getOutputFormat: () => GitmojiOutputFormat
+    private readonly getOutputFormat: () => GitmojiOutputFormat,
+    private readonly getEnableScopeMatching: () => boolean = () => true
   ) {}
 
   public start(): void {
@@ -70,7 +71,8 @@ export class CommitAutoMatch implements vscode.Disposable {
       current,
       this.getMappings(),
       this.getPosition(),
-      this.getOutputFormat()
+      this.getOutputFormat(),
+      this.getEnableScopeMatching()
     );
 
     if (formatted === current) {

@@ -69,6 +69,11 @@
         "command": "autoGitmoji.openDictionary",
         "title": "Auto Gitmoji: Open Dictionary",
         "icon": "$(book)"
+      },
+      {
+        "command": "autoGitmoji.installGitHook",
+        "title": "Auto Gitmoji: Install Git Hook (All IDEs)",
+        "icon": "$(git-merge)"
       }
     ],
     "keybindings": [
@@ -170,6 +175,11 @@
           "type": "boolean",
           "default": false,
           "markdownDescription": "When enabled, automatically insert a Gitmoji into the Source Control commit box once a conventional type is typed (`fix: …`). Off by default so it does not fight half-written messages."
+        },
+        "autoGitmoji.enableScopeMatching": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "When enabled, conventional commit scopes like `chore(deps)` or `chore(docs)` trigger specialized emojis (`⬆️`, `📝`) rather than generic chore icons."
         },
         "autoGitmoji.onlyCustomMappings": {
           "type": "boolean",

@@ -1,4 +1,6 @@
 import * as vscode from "vscode";
+import * as path from "path";
+import { execSync } from "child_process";
 import { CommitAutoMatch } from "./autoMatch";
 import {
   getBuiltInMappings,
@@ -52,6 +54,12 @@ function getOutputFormat(): GitmojiOutputFormat {
     .get<string>("outputFormat", "emoji");
 
   return configured === "code" ? "code" : "emoji";
+}
+
+function getEnableScopeMatching(): boolean {
+  return vscode.workspace
+    .getConfiguration("autoGitmoji")
+    .get<boolean>("enableScopeMatching", true);
 }
 
 function readExplicitBoolean(
@@ -213,7 +221,8 @@ function registerFormatCommitCommand(
           current,
           sortedMappings,
           getPosition(),
-          getOutputFormat()
+          getOutputFormat(),
+          getEnableScopeMatching()
         );
         if (formatted === current) {
           vscode.window.showInformationMessage(
@@ -291,10 +300,13 @@ function registerInsertPickerCommand(
       const outputFormat = getOutputFormat();
       const items = sortedMappings.map((m) => {
         const token = formatToken(m, outputFormat);
+        const categoryBadge = m.category ? `[${m.category}] ` : "";
+        const semverText = m.semver ? ` · ${m.semver}` : "";
+        const desc = m.description ? `${m.description}${semverText}` : (m.semver ? m.semver : "");
         return {
           label: `${m.gitmoji} ${m.name ?? m.keywords[0]}`,
-          description: m.semver ? `${m.description ?? ""} · ${m.semver}` : m.description,
-          detail: [m.code, ...m.keywords].filter(Boolean).join(", "),
+          description: `${categoryBadge}${desc}`,
+          detail: [m.code, m.category, ...m.keywords].filter(Boolean).join(", "),
           token,
         };
       });
@@ -366,7 +378,8 @@ function registerAutoFormatOnBlur(context: vscode.ExtensionContext): void {
         current,
         sortedMappings,
         getPosition(),
-        getOutputFormat()
+        getOutputFormat(),
+        getEnableScopeMatching()
       );
       if (formatted !== current) {
         await setActiveCommitMessage(formatted);
@@ -375,12 +388,61 @@ function registerAutoFormatOnBlur(context: vscode.ExtensionContext): void {
   );
 }
 
+function registerInstallGitHookCommand(context: vscode.ExtensionContext): void {
+  context.subscriptions.push(
+    vscode.commands.registerCommand("autoGitmoji.installGitHook", async () => {
+      const choice = await vscode.window.showQuickPick(
+        [
+          {
+            label: "$(git-merge) Install Hook in Current Repository",
+            description: "Auto-formats commit messages in VS Code, JetBrains, Visual Studio, Neovim, etc.",
+            target: "repo",
+          },
+          {
+            label: "$(globe) Install Hook Globally (All Git Repositories)",
+            description: "Applies across every Git repository on this computer",
+            target: "global",
+          },
+        ],
+        { placeHolder: "Select Git hook installation scope for all IDEs" }
+      );
+
+      if (!choice) {
+        return;
+      }
+
+      const isGlobal = choice.target === "global";
+      const folders = vscode.workspace.workspaceFolders;
+      const cwd = (!isGlobal && folders && folders.length > 0)
+        ? folders[0].uri.fsPath
+        : undefined;
+
+      try {
+        const cliPath = path.resolve(context.extensionPath, "..", "cli", "bin", "auto-gitmoji.js");
+        const cmd = isGlobal ? `node "${cliPath}" hook install --global` : `node "${cliPath}" hook install`;
+        execSync(cmd, { cwd });
+        vscode.window.showInformationMessage(
+          `Auto Gitmoji: Git hook installed successfully! ${isGlobal ? "(Global)" : "(Repository)"}`
+        );
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
+        vscode.window.showErrorMessage(`Auto Gitmoji: Failed to install hook: ${msg}`);
+      }
+    })
+  );
+}
+
 export function activate(context: vscode.ExtensionContext): void {
-  const statusBar = new CommitStatusBar(getMappings, getOutputFormat);
+  const statusBar = new CommitStatusBar(
+    getMappings,
+    getOutputFormat,
+    getEnableScopeMatching
+  );
   const autoMatch = new CommitAutoMatch(
     getMappings,
     getPosition,
-    getOutputFormat
+    getOutputFormat,
+    getEnableScopeMatching
   );
   context.subscriptions.push(statusBar, autoMatch);
 
@@ -432,6 +494,7 @@ export function activate(context: vscode.ExtensionContext): void {
   registerInsertPickerCommand(context, statusBar);
   registerOpenDictionaryCommand(context);
   registerAutoFormatOnBlur(context);
+  registerInstallGitHookCommand(context);
   registerGitmojiCompletion(context, getMappings, getOutputFormat);
 
   void showWelcomeIfNeeded(context);
