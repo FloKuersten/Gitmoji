@@ -16,16 +16,18 @@ const POLL_INTERVAL_MS = 2000;
 export class CommitStatusBar {
   private readonly item: vscode.StatusBarItem;
   private timer: ReturnType<typeof setInterval> | undefined;
-  private lastMessage: string | undefined;
   private getMappings: () => GitmojiMapping[];
   private getOutputFormat: () => GitmojiOutputFormat;
+  private getEnableScopeMatching: () => boolean;
 
   constructor(
     getMappings: () => GitmojiMapping[],
-    getOutputFormat: () => GitmojiOutputFormat = () => "emoji"
+    getOutputFormat: () => GitmojiOutputFormat = () => "emoji",
+    getEnableScopeMatching: () => boolean = () => true
   ) {
     this.getMappings = getMappings;
     this.getOutputFormat = getOutputFormat;
+    this.getEnableScopeMatching = getEnableScopeMatching;
     this.item = vscode.window.createStatusBarItem(
       vscode.StatusBarAlignment.Left,
       100
