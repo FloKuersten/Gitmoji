@@ -2,6 +2,21 @@
 
 All releases by **KueTech Digital** — [kuetech.at](https://kuetech.at)
 
+## 1.4.0
+
+### Security & Hardening
+
+- **0 npm Vulnerabilities**: Upgraded `@vscode/vsce` to v4.0.0 and `ovsx` to v1.2.0, resolving all high and moderate security advisories (`braces`, `brace-expansion`, `source-map-js`, `undici`, `fast-uri`).
+- **Webview CSP Hardening**: Implemented strict per-render cryptographic `nonce` validation for Support webview scripts (`script-src 'nonce-${nonce}'`).
+- **URL Protocol Validation**: Hardened external link dispatchers (`vscode.env.openExternal`) to strictly accept trusted `http:` and `https:` schemes, preventing unsafe URL scheme abuse.
+- **Git Hook Execution Safety**: Switched CLI hook runner and extension hook installer to use direct process argument spawning (`spawnSync`), eliminating shell string interpolation and command injection risks. Added automatic standalone fallback when running as an installed extension outside the repository.
+
+### Added
+
+- Automated publishing workflow for **Visual Studio Code Marketplace** (`.github/workflows/publish-marketplace.yml`) with tokenized packaging (`publish:marketplace`).
+- Single-command unified publishing script (`npm run publish:all`) for dual Open VSX and Visual Studio Marketplace deployments.
+- Root repository `package-lock.json` and synchronized `1.4.0` monorepo release versioning.
+
 ## 1.3.0
 
 ### Added

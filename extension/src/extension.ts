@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import * as path from "path";
-import { execSync } from "child_process";
+import * as fs from "fs";
+import { spawnSync } from "child_process";
 import { CommitAutoMatch } from "./autoMatch";
 import {
   getBuiltInMappings,
@@ -431,10 +432,63 @@ function registerInstallGitHookCommand(context: vscode.ExtensionContext): void {
           "bin",
           "auto-gitmoji.js"
         );
-        const cmd = isGlobal
-          ? `node "${cliPath}" hook install --global`
-          : `node "${cliPath}" hook install`;
-        execSync(cmd, { cwd });
+
+        if (fs.existsSync(cliPath)) {
+          const args = [cliPath, "hook", "install"];
+          if (isGlobal) {
+            args.push("--global");
+          }
+          const res = spawnSync(process.execPath, args, {
+            cwd,
+            encoding: "utf8",
+          });
+          if (res.status !== 0) {
+            throw new Error(res.stderr || "Hook installation failed.");
+          }
+        } else {
+          // Fallback when installed as packaged extension: install directly via git hooks directory
+          if (isGlobal) {
+            const homeDir = process.env.HOME || process.env.USERPROFILE || "";
+            if (!homeDir) {
+              throw new Error("Cannot locate user home directory.");
+            }
+            const globalHooksDir = path.join(
+              homeDir,
+              ".git-templates",
+              "hooks"
+            );
+            fs.mkdirSync(globalHooksDir, { recursive: true });
+            const hookFile = path.join(globalHooksDir, "prepare-commit-msg");
+            const script = `#!/bin/sh\n# Auto Gitmoji Universal Hook (Global)\nif command -v auto-gitmoji >/dev/null 2>&1; then\n  auto-gitmoji hook run "$1"\nelif command -v npx >/dev/null 2>&1; then\n  npx -y auto-gitmoji hook run "$1"\nfi\n`;
+            fs.writeFileSync(hookFile, script, { mode: 0o755 });
+            const configRes = spawnSync("git", [
+              "config",
+              "--global",
+              "core.hooksPath",
+              globalHooksDir.replace(/\\/g, "/"),
+            ]);
+            if (configRes.status !== 0) {
+              throw new Error("Failed to configure git core.hooksPath.");
+            }
+          } else {
+            const gitDirRes = spawnSync("git", ["rev-parse", "--git-dir"], {
+              cwd,
+              encoding: "utf8",
+            });
+            if (gitDirRes.status !== 0 || !gitDirRes.stdout.trim()) {
+              throw new Error(
+                "Not inside a Git repository. Run 'git init' first or use global scope."
+              );
+            }
+            const gitDir = path.resolve(cwd || ".", gitDirRes.stdout.trim());
+            const hooksDir = path.join(gitDir, "hooks");
+            fs.mkdirSync(hooksDir, { recursive: true });
+            const hookFile = path.join(hooksDir, "prepare-commit-msg");
+            const script = `#!/bin/sh\n# Auto Gitmoji Universal Hook (Repository)\nif command -v auto-gitmoji >/dev/null 2>&1; then\n  auto-gitmoji hook run "$1"\nelif command -v npx >/dev/null 2>&1; then\n  npx -y auto-gitmoji hook run "$1"\nfi\n`;
+            fs.writeFileSync(hookFile, script, { mode: 0o755 });
+          }
+        }
+
         vscode.window.showInformationMessage(
           `Auto Gitmoji: Git hook installed successfully! ${isGlobal ? "(Global)" : "(Repository)"}`
         );

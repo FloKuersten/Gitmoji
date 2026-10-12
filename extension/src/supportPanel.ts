@@ -1,4 +1,9 @@
 import * as vscode from "vscode";
+import * as crypto from "crypto";
+
+function getNonce(): string {
+  return crypto.randomBytes(16).toString("base64");
+}
 
 export class SupportPanel {
   public static readonly viewType = "autoGitmoji.support";
@@ -87,12 +92,13 @@ export class SupportPanel {
     );
 
     const cspSource = webview.cspSource;
+    const nonce = getNonce();
 
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${cspSource} https:; style-src ${cspSource} 'unsafe-inline'; script-src ${cspSource};" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${cspSource} https:; style-src ${cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}';" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KueTech Digital — Support</title>
   <style>
@@ -176,7 +182,7 @@ export class SupportPanel {
     </div>
     <p class="note"><strong>KueTech Digital</strong> · <a href="#" id="siteLink">kuetech.at</a></p>
   </div>
-  <script>
+  <script nonce="${nonce}">
     const vscode = acquireVsCodeApi();
     document.getElementById('bmac').addEventListener('click', () => {
       vscode.postMessage({ command: 'openBmac' });
@@ -193,12 +199,25 @@ export class SupportPanel {
 </html>`;
   }
 
+  private isSafeHttpUrl(rawUrl: string): boolean {
+    try {
+      const parsed = vscode.Uri.parse(rawUrl);
+      return parsed.scheme === "http" || parsed.scheme === "https";
+    } catch {
+      return false;
+    }
+  }
+
   private async openWebsite(): Promise<void> {
     const url = vscode.workspace
       .getConfiguration("autoGitmoji")
       .get<string>("websiteUrl", "https://kuetech.at");
-    if (url) {
+    if (url && this.isSafeHttpUrl(url)) {
       await vscode.env.openExternal(vscode.Uri.parse(url));
+    } else if (url) {
+      vscode.window.showWarningMessage(
+        "Auto Gitmoji: Refused to open unsafe URL. Only HTTP and HTTPS URLs are permitted."
+      );
     }
   }
 
@@ -212,7 +231,13 @@ export class SupportPanel {
       );
       return;
     }
-    await vscode.env.openExternal(vscode.Uri.parse(url));
+    if (this.isSafeHttpUrl(url)) {
+      await vscode.env.openExternal(vscode.Uri.parse(url));
+    } else {
+      vscode.window.showWarningMessage(
+        "Auto Gitmoji: Refused to open unsafe URL. Only HTTP and HTTPS URLs are permitted."
+      );
+    }
   }
 
   private dispose(): void {

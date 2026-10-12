@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync, spawnSync } = require('child_process');
+const { spawnSync } = require('child_process');
 const readline = require('readline');
 const {
   formatCommitMessage,
@@ -56,8 +56,11 @@ function printHelp() {
 
 function findGitDir() {
   try {
-    const gitDir = execSync('git rev-parse --git-dir', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] }).trim();
-    return path.resolve(gitDir);
+    const res = spawnSync('git', ['rev-parse', '--git-dir'], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] });
+    if (res.status === 0 && res.stdout) {
+      return path.resolve(res.stdout.trim());
+    }
+    return null;
   } catch {
     return null;
   }
@@ -152,13 +155,13 @@ function handleHookInstall(isGlobal) {
 node "${cliScriptPath}" hook run "$1"
 `;
     fs.writeFileSync(hookFile, hookScript, { mode: 0o755 });
-    try {
-      execSync(`git config --global core.hooksPath "${globalHooksDir.replace(/\\/g, '/')}"`);
+    const res = spawnSync('git', ['config', '--global', 'core.hooksPath', globalHooksDir.replace(/\\/g, '/')]);
+    if (res.status === 0) {
       console.log(`\x1b[32m✔ Global Git hook installed successfully!\x1b[0m`);
       console.log(`\x1b[90mLocation: ${hookFile}\x1b[0m`);
       console.log(`\x1b[36mEvery Git repository on your machine in any IDE will now auto-format commit messages with Gitmoji!\x1b[0m`);
-    } catch (e) {
-      console.error(`\x1b[31mFailed to configure global hooks: ${e.message}\x1b[0m`);
+    } else {
+      console.error(`\x1b[31mFailed to configure global hooks\x1b[0m`);
     }
     return;
   }
@@ -186,10 +189,10 @@ node "${cliScriptPath}" hook run "$1"
 
 function handleHookUninstall(isGlobal) {
   if (isGlobal) {
-    try {
-      execSync('git config --global --unset core.hooksPath');
+    const res = spawnSync('git', ['config', '--global', '--unset', 'core.hooksPath']);
+    if (res.status === 0) {
       console.log('\x1b[32m✔ Global Git hook uninstalled.\x1b[0m');
-    } catch {
+    } else {
       console.log('\x1b[33mNo global hook configuration found.\x1b[0m');
     }
     return;
@@ -289,9 +292,8 @@ function handleCommit() {
     rl.close();
 
     if (confirm === '' || confirm === 'y' || confirm === 'yes') {
-      try {
-        execSync(`git commit -m "${formatted.replace(/"/g, '\\"')}"`, { stdio: 'inherit' });
-      } catch (err) {
+      const commitRes = spawnSync('git', ['commit', '-m', formatted], { stdio: 'inherit' });
+      if (commitRes.status !== 0) {
         console.error('\x1b[31mCommit failed.\x1b[0m');
       }
     } else {

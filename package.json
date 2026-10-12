@@ -1,6 +1,6 @@
 {
   "name": "auto-gitmoji-monorepo",
-  "version": "1.1.0",
+  "version": "1.4.0",
   "private": true,
   "description": "Repository root for Auto Gitmoji & Docs. The extension lives in ./extension.",
   "license": "MIT",
@@ -22,6 +22,8 @@
     "package": "npm --prefix extension run package",
     "openvsx:check": "npm --prefix extension run openvsx:check",
     "publish:ovsx": "npm --prefix extension run publish:ovsx",
+    "publish:marketplace": "npm --prefix extension run publish:marketplace",
+    "publish:all": "npm --prefix extension run publish:all",
     "install:extension": "npm --prefix extension install",
     "cli": "node cli/bin/auto-gitmoji.js",
     "hook:install": "node cli/bin/auto-gitmoji.js hook install",

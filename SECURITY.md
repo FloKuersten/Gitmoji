@@ -52,7 +52,7 @@ Only the latest published release receives security fixes. Please upgrade before
 
 ### Webview hardening
 
-The Support panel is a local webview with a restrictive Content Security Policy: no remote scripts, images limited to the extension's own resources and HTTPS, and scripts limited to the extension's own origin. Navigation happens through `vscode.env.openExternal`, so links open in your system browser rather than inside the editor.
+The Support panel is a local webview with a hardened Content Security Policy enforcing per-render cryptographic `nonce` tokens (`script-src 'nonce-${nonce}'`), with images restricted to extension resources and HTTPS. Navigation through `vscode.env.openExternal` strictly validates URL protocols for `http:` and `https:`, mitigating malicious custom URI scheme abuse.
 
 ## Automated checks
 

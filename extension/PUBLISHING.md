@@ -87,31 +87,49 @@ The workflow re-runs lint, typecheck, tests, packages the VSIX, then publishes.
 
 ---
 
-## Visual Studio Marketplace (optional, for VS Code)
+## Visual Studio Marketplace (VS Code Store)
 
-1. Create publisher `kuetech` at [marketplace.visualstudio.com/manage](https://marketplace.visualstudio.com/manage).
-2. Create an Azure DevOps PAT with **Marketplace → Manage**.
-3. Publish:
+### One-time account setup
+
+1. Create or log in to publisher `kuetech` at [marketplace.visualstudio.com/manage](https://marketplace.visualstudio.com/manage).
+2. Create an Azure DevOps Personal Access Token (PAT) with **Marketplace (Publish)** scope.
+3. Save the token as an environment variable `VSCE_PAT` locally or as a GitHub repository secret named `VSCE_PAT`.
+
+### Publish from your machine
 
 ```powershell
 cd d:\WORK\Gitmoji\extension
-npx.cmd vsce login kuetech
-npx.cmd vsce publish --no-dependencies
+$env:VSCE_PAT = "paste-token-here-then-clear-it"
+npm.cmd run publish:marketplace
+Remove-Item Env:VSCE_PAT
 ```
 
-Or publish the already-built VSIX:
+To publish to **both** Open VSX and Visual Studio Marketplace in one command:
 
 ```powershell
-npx.cmd vsce publish --no-dependencies --packagePath auto-gitmoji-docs-1.1.0.vsix
+$env:OVSX_PAT = "your-ovsx-token"
+$env:VSCE_PAT = "your-vsce-token"
+npm.cmd run publish:all
+Remove-Item Env:OVSX_PAT, Env:VSCE_PAT
 ```
+
+### Publish from GitHub Actions
+
+1. Repo **Settings → Secrets and variables → Actions → New repository secret**
+2. Secret Names:
+   - `VSCE_PAT` for VS Code Marketplace
+   - `OVSX_PAT` for Open VSX
+3. Either:
+   - **Actions → Publish VS Code Marketplace → Run workflow**, or
+   - Create a GitHub Release. The workflow runs on `release: published`.
 
 ---
 
 ## Next version
 
-1. Bump `"version"` in `extension/package.json`.
+1. Bump `"version"` in `extension/package.json` and root `package.json`.
 2. Add notes to `extension/CHANGELOG.md`.
-3. Commit, push, then run `npm.cmd run publish:ovsx` (and `vsce publish` if you also use the Marketplace).
+3. Commit, push, then run `npm.cmd run publish:all` (or let GitHub Actions publish on Release).
 
 ---
 
