@@ -65,7 +65,7 @@ This repository runs the following on every push and pull request to `main`, plu
 | [security.yml](.github/workflows/security.yml) | Gitleaks secret scan over full history and `npm audit` |
 | [dependabot.yml](.github/dependabot.yml) | Weekly dependency and GitHub Actions updates |
 
-Production dependency advisories fail the build. Development-tooling advisories are reported without blocking, since build tools do not ship to users.
+Production dependency advisories of low severity or higher fail the security workflow. Moderate-or-higher advisories also fail the workflow for development dependencies, including test and publishing tools, even though those tools do not ship in the extension.
 
 Run the same checks locally:
 
@@ -75,7 +75,8 @@ npm ci
 npm run lint
 npm run typecheck
 npm test
-npm audit --omit=dev
+npm audit --omit=dev --audit-level=low
+npm audit --audit-level=moderate
 ```
 
 ## Public repository contents
