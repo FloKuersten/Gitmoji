@@ -1,13 +1,12 @@
 import * as vscode from "vscode";
 import { autoFormatCommitMessage } from "./gitmojiMatcher";
-import {
-  getActiveCommitMessage,
-  setActiveCommitMessage,
-} from "./scmIntegration";
+import { getCommitMessageTarget } from "./scmIntegration";
+import { applyCommitMessage } from "./repositorySelection";
 import type {
   GitmojiMapping,
   GitmojiOutputFormat,
   GitmojiPosition,
+  GitRepository,
 } from "./types";
 
 const POLL_INTERVAL_MS = 900;
@@ -21,6 +20,9 @@ export class CommitAutoMatch implements vscode.Disposable {
   private timer: ReturnType<typeof setInterval> | undefined;
   private lastSeen: string | undefined;
   private applying = false;
+  private lastRepository: GitRepository | undefined;
+  private generation = 0;
+  private disposed = false;
 
   constructor(
     private readonly getMappings: () => GitmojiMapping[],
@@ -34,6 +36,8 @@ export class CommitAutoMatch implements vscode.Disposable {
   }
 
   public applyEnabledState(): void {
+    if (this.disposed) return;
+    this.generation++;
     const enabled = vscode.workspace
       .getConfiguration("autoGitmoji")
       .get<boolean>("autoMatch", false);
@@ -41,6 +45,7 @@ export class CommitAutoMatch implements vscode.Disposable {
     if (!enabled) {
       this.stopPolling();
       this.lastSeen = undefined;
+      this.lastRepository = undefined;
       return;
     }
 
@@ -52,36 +57,44 @@ export class CommitAutoMatch implements vscode.Disposable {
   }
 
   private async tick(): Promise<void> {
-    if (this.applying) {
-      return;
-    }
-
-    const current = await getActiveCommitMessage();
-    if (current === undefined) {
-      this.lastSeen = undefined;
-      return;
-    }
-
-    if (current === this.lastSeen) {
-      return;
-    }
-    this.lastSeen = current;
-
-    const formatted = autoFormatCommitMessage(
-      current,
-      this.getMappings(),
-      this.getPosition(),
-      this.getOutputFormat(),
-      this.getEnableScopeMatching()
-    );
-
-    if (formatted === current) {
+    if (this.applying || this.disposed || !this.timer) {
       return;
     }
 
     this.applying = true;
+    const generation = this.generation;
     try {
-      if (await setActiveCommitMessage(formatted)) {
+      const target = await getCommitMessageTarget();
+      if (generation !== this.generation || this.disposed) return;
+      if (!target) {
+        this.lastSeen = undefined;
+        this.lastRepository = undefined;
+        return;
+      }
+
+      const current = target.original;
+      if (
+        current === this.lastSeen &&
+        target.repository === this.lastRepository
+      ) {
+        return;
+      }
+      this.lastSeen = current;
+      this.lastRepository = target.repository;
+
+      const formatted = autoFormatCommitMessage(
+        current,
+        this.getMappings(),
+        this.getPosition(),
+        this.getOutputFormat(),
+        this.getEnableScopeMatching()
+      );
+
+      if (formatted === current) {
+        return;
+      }
+
+      if (applyCommitMessage(target, formatted)) {
         this.lastSeen = formatted;
       }
     } finally {
@@ -97,6 +110,8 @@ export class CommitAutoMatch implements vscode.Disposable {
   }
 
   public dispose(): void {
+    this.disposed = true;
+    this.generation++;
     this.stopPolling();
   }
 }

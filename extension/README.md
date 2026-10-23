@@ -66,6 +66,7 @@ Insert [Gitmojis](https://gitmoji.dev) into **Git commit messages** and **docstr
 | Command | Shortcut | What it does |
 |---------|----------|----------------|
 | `Auto Gitmoji: Format Commit Message` | `Ctrl+Alt+G` | 💬 Add Gitmoji to Git commit box |
+| `Auto Gitmoji: Pick Gitmoji for Commit` | SCM smiley button | Choose a Gitmoji for the selected repository |
 | `Auto Gitmoji: Pick and Insert Gitmoji` | `Ctrl+Alt+M` | 🎨 Choose emoji from list |
 | `Auto Gitmoji: Format Docstring / Comment` | — | 📝 Add Gitmoji to comment/doc line |
 | `Auto Gitmoji: Open Dictionary` | — | 📖 Inspect the active mappings |
@@ -73,7 +74,13 @@ Insert [Gitmojis](https://gitmoji.dev) into **Git commit messages** and **docstr
 
 On macOS use `Cmd` instead of `Ctrl`.
 
-**SCM toolbar:** Git commit icon in the Source Control title bar (when Git is active).
+**SCM toolbar:** Use the smiley icon to pick any Gitmoji for that repository, or the Git commit icon to format from a matching keyword. The commit picker works even with a file editor open and honors the emoji/shortcode and position settings.
+
+In multi-repository workspaces, toolbar commands target their own repository. Other commit commands prefer the selected Source Control repository, then the active or visible editor's repository. If the destination is still ambiguous, select a repository first. A picker never overwrites a commit draft changed while it was open.
+
+The editor picker keeps its original editor and selections, including multiple cursors. If the document changes while the picker is open, reopen the picker to insert safely.
+
+Commit formatting preserves the body, trailers, indentation and line endings. Existing Gitmojis before the subject or after a conventional type are left unchanged, including during auto-match.
 
 **Status bar:** When your commit message matches a keyword, the emoji appears in the status bar — click it to apply.
 

@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
 import { spawnSync } from "child_process";
+import { captureEditorInsertion } from "./editorInsertion";
 import { CommitAutoMatch } from "./autoMatch";
 import {
   getBuiltInMappings,
@@ -13,11 +14,10 @@ import {
   formatCommitMessage,
   formatDocstringBlock,
   formatToken,
+  insertCommitToken,
 } from "./gitmojiMatcher";
-import {
-  getActiveCommitMessage,
-  setActiveCommitMessage,
-} from "./scmIntegration";
+import { getCommitMessageTarget } from "./scmIntegration";
+import { applyCommitMessage } from "./repositorySelection";
 import { CommitStatusBar } from "./statusBar";
 import { registerSupportCommand, SupportPanel } from "./supportPanel";
 import type {
@@ -207,15 +207,16 @@ function registerFormatCommitCommand(
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "autoGitmoji.formatCommitMessage",
-      async () => {
-        const current = await getActiveCommitMessage();
-        if (current === undefined) {
+      async (sourceControl?: vscode.SourceControl) => {
+        const target = await getCommitMessageTarget(sourceControl);
+        if (!target) {
           vscode.window.showWarningMessage(
-            "Open the Source Control view and ensure the Git extension is enabled."
+            "Select a Git repository in Source Control and ensure the Git extension is enabled."
           );
           return;
         }
 
+        const current = target.original;
         const formatted = formatCommitMessage(
           current,
           sortedMappings,
@@ -230,9 +231,9 @@ function registerFormatCommitCommand(
           return;
         }
 
-        if (!(await setActiveCommitMessage(formatted))) {
+        if (!applyCommitMessage(target, formatted)) {
           vscode.window.showErrorMessage(
-            "Could not update the commit message."
+            "The commit message changed. Please try again."
           );
           return;
         }
@@ -294,52 +295,84 @@ function registerInsertPickerCommand(
   context: vscode.ExtensionContext,
   statusBar: CommitStatusBar
 ): void {
+  const pick = async (
+    commitOnly = false,
+    sourceControl?: vscode.SourceControl
+  ) => {
+    const editor = commitOnly ? undefined : vscode.window.activeTextEditor;
+    const insertIntoEditor = editor
+      ? captureEditorInsertion(editor)
+      : undefined;
+    const position = getPosition();
+    const target = editor
+      ? undefined
+      : await getCommitMessageTarget(sourceControl);
+    if (!editor && !target) {
+      vscode.window.showWarningMessage(
+        "Select a Git repository in Source Control first."
+      );
+      return;
+    }
+    const outputFormat = getOutputFormat();
+    const items = sortedMappings.map((m) => {
+      const token = formatToken(m, outputFormat);
+      const categoryBadge = m.category ? `[${m.category}] ` : "";
+      const semverText = m.semver ? ` · ${m.semver}` : "";
+      const desc = m.description
+        ? `${m.description}${semverText}`
+        : m.semver
+          ? m.semver
+          : "";
+      return {
+        label: `${m.gitmoji} ${m.name ?? m.keywords[0]}`,
+        description: `${categoryBadge}${desc}`,
+        detail: [m.code, m.category, ...m.keywords].filter(Boolean).join(", "),
+        token,
+      };
+    });
+
+    const picked = await vscode.window.showQuickPick(items, {
+      placeHolder: `Select a Gitmoji for ${editor ? path.basename(editor.document.fileName) : path.basename(target!.repository.rootUri.fsPath)}`,
+      matchOnDetail: true,
+      matchOnDescription: true,
+    });
+
+    if (!picked) {
+      return;
+    }
+
+    if (insertIntoEditor) {
+      if (!(await insertIntoEditor(picked.token))) {
+        vscode.window.showWarningMessage(
+          "The original editor changed or could not accept the edit. Please open the picker again."
+        );
+      }
+      return;
+    }
+    if (target) {
+      const formatted = insertCommitToken(
+        target.original,
+        picked.token,
+        position
+      );
+      if (!applyCommitMessage(target, formatted)) {
+        vscode.window.showWarningMessage(
+          "The commit message changed. Please open the picker again."
+        );
+      } else if (formatted === target.original) {
+        vscode.window.showInformationMessage(
+          "A Gitmoji is already present in the commit subject."
+        );
+      }
+      statusBar.refresh();
+    }
+  };
   context.subscriptions.push(
-    vscode.commands.registerCommand("autoGitmoji.insertGitmoji", async () => {
-      const outputFormat = getOutputFormat();
-      const items = sortedMappings.map((m) => {
-        const token = formatToken(m, outputFormat);
-        const categoryBadge = m.category ? `[${m.category}] ` : "";
-        const semverText = m.semver ? ` · ${m.semver}` : "";
-        const desc = m.description
-          ? `${m.description}${semverText}`
-          : m.semver
-            ? m.semver
-            : "";
-        return {
-          label: `${m.gitmoji} ${m.name ?? m.keywords[0]}`,
-          description: `${categoryBadge}${desc}`,
-          detail: [m.code, m.category, ...m.keywords]
-            .filter(Boolean)
-            .join(", "),
-          token,
-        };
-      });
-
-      const picked = await vscode.window.showQuickPick(items, {
-        placeHolder: "Select a Gitmoji to insert",
-        matchOnDetail: true,
-        matchOnDescription: true,
-      });
-
-      if (!picked) {
-        return;
-      }
-
-      const editor = vscode.window.activeTextEditor;
-      if (editor) {
-        await editor.edit((builder) => {
-          builder.insert(editor.selection.active, `${picked.token} `);
-        });
-        return;
-      }
-
-      const current = await getActiveCommitMessage();
-      if (current !== undefined) {
-        await setActiveCommitMessage(`${picked.token} ${current}`.trim());
-        statusBar.refresh();
-      }
-    })
+    vscode.commands.registerCommand("autoGitmoji.insertGitmoji", () => pick()),
+    vscode.commands.registerCommand(
+      "autoGitmoji.insertCommitGitmoji",
+      (sourceControl?: vscode.SourceControl) => pick(true, sourceControl)
+    )
   );
 }
 
@@ -374,8 +407,9 @@ function registerAutoFormatOnBlur(context: vscode.ExtensionContext): void {
         return;
       }
 
-      const current = await getActiveCommitMessage();
-      if (!current?.trim()) {
+      const target = await getCommitMessageTarget();
+      const current = target?.original;
+      if (!target || !current?.trim()) {
         return;
       }
 
@@ -387,7 +421,7 @@ function registerAutoFormatOnBlur(context: vscode.ExtensionContext): void {
         getEnableScopeMatching()
       );
       if (formatted !== current) {
-        await setActiveCommitMessage(formatted);
+        applyCommitMessage(target, formatted);
       }
     })
   );
@@ -545,7 +579,8 @@ export function activate(context: vscode.ExtensionContext): void {
 
       if (
         event.affectsConfiguration("autoGitmoji.outputFormat") ||
-        event.affectsConfiguration("autoGitmoji.position")
+        event.affectsConfiguration("autoGitmoji.position") ||
+        event.affectsConfiguration("autoGitmoji.enableScopeMatching")
       ) {
         statusBar.refresh();
       }

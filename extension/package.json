@@ -2,7 +2,7 @@
   "name": "auto-gitmoji-docs",
   "displayName": "Auto Gitmoji & Docs",
   "description": "Insert Gitmojis into commit messages and docstrings using a local dictionary — no AI, no network. By KueTech Digital.",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "publisher": "kuetech",
   "license": "MIT",
   "icon": "media/icon.png",
@@ -74,6 +74,11 @@
         "command": "autoGitmoji.installGitHook",
         "title": "Auto Gitmoji: Install Git Hook (All IDEs)",
         "icon": "$(git-merge)"
+      },
+      {
+        "command": "autoGitmoji.insertCommitGitmoji",
+        "title": "Auto Gitmoji: Pick Gitmoji for Commit",
+        "icon": "$(smiley)"
       }
     ],
     "keybindings": [
@@ -90,6 +95,11 @@
     ],
     "menus": {
       "scm/title": [
+        {
+          "command": "autoGitmoji.insertCommitGitmoji",
+          "group": "navigation@98",
+          "when": "scmProvider == git"
+        },
         {
           "command": "autoGitmoji.formatCommitMessage",
           "group": "navigation@99",

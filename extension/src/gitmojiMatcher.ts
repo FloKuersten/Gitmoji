@@ -15,7 +15,7 @@ const EMOJI_PREFIX = /^(?:\p{Extended_Pictographic}|[0-9#*]\uFE0F?\u20E3)/u;
 /** Official shortcode already at the start of the message, e.g. `:bug: fix`. */
 const CODE_PREFIX = /^:[a-z0-9_+-]+:/i;
 
-const CONVENTIONAL_PREFIX = /^(\w+)(\([^)]*\))?(!)?:\s*/;
+const CONVENTIONAL_PREFIX = /^(\w+)(\([^)]*\))?(!)?:[\t ]*/;
 
 /**
  * Comment openers recognized on a summary line. The emoji is inserted after the
@@ -52,6 +52,15 @@ export function hasLeadingGitmoji(text: string): boolean {
     return false;
   }
   return EMOJI_PREFIX.test(trimmed) || CODE_PREFIX.test(trimmed);
+}
+
+function hasCommitGitmoji(message: string): boolean {
+  const summary = message.split(/\r?\n/, 1)[0].trimStart();
+  const prefix = summary.match(CONVENTIONAL_PREFIX)?.[0];
+  return (
+    hasLeadingGitmoji(summary) ||
+    (prefix !== undefined && hasLeadingGitmoji(summary.slice(prefix.length)))
+  );
 }
 
 /**
@@ -126,7 +135,7 @@ export function matchGitmoji(
   mappings: GitmojiMapping[],
   enableScopeMatching: boolean = true
 ): GitmojiMapping | null {
-  if (hasLeadingGitmoji(text)) {
+  if (hasCommitGitmoji(text)) {
     return null;
   }
 
@@ -174,11 +183,25 @@ function applyPosition(
     const conventional = message.match(CONVENTIONAL_PREFIX);
     if (conventional) {
       const prefix = conventional[0];
-      return `${prefix}${token} ${message.slice(prefix.length)}`;
+      const space = /[\t ]$/.test(prefix) ? "" : " ";
+      return `${prefix}${space}${token} ${message.slice(prefix.length)}`;
     }
   }
 
   return `${token} ${message}`;
+}
+
+/** Insert only into the subject; retain body, trailers, whitespace and line endings. */
+export function insertCommitToken(
+  message: string,
+  token: string,
+  position: GitmojiPosition = "prefix"
+): string {
+  if (hasCommitGitmoji(message)) return message;
+  const subject = message.match(/^[^\r\n]*/)?.[0] ?? "";
+  const trimmed = subject.trimStart();
+  const indent = subject.slice(0, subject.length - trimmed.length);
+  return `${indent}${applyPosition(trimmed, token, position)}${message.slice(subject.length)}`;
 }
 
 export function formatCommitMessage(
@@ -188,8 +211,8 @@ export function formatCommitMessage(
   outputFormat: GitmojiOutputFormat = "emoji",
   enableScopeMatching: boolean = true
 ): string {
-  const trimmed = message.trim();
-  if (!trimmed || hasLeadingGitmoji(trimmed)) {
+  const trimmed = message.split(/\r?\n/, 1)[0].trim();
+  if (!trimmed || hasCommitGitmoji(message)) {
     return message;
   }
 
@@ -198,7 +221,11 @@ export function formatCommitMessage(
     return message;
   }
 
-  return applyPosition(trimmed, formatToken(mapping, outputFormat), position);
+  return insertCommitToken(
+    message,
+    formatToken(mapping, outputFormat),
+    position
+  );
 }
 
 /**
@@ -206,8 +233,8 @@ export function formatCommitMessage(
  * auto-match can apply without guessing from a half-typed first word.
  */
 export function isAutoMatchCandidate(message: string): boolean {
-  const trimmed = message.trim();
-  if (!trimmed || hasLeadingGitmoji(trimmed)) {
+  const trimmed = message.split(/\r?\n/, 1)[0].trim();
+  if (!trimmed || hasCommitGitmoji(message)) {
     return false;
   }
   return CONVENTIONAL_PREFIX.test(trimmed);

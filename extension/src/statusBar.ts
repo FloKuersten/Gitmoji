@@ -20,6 +20,9 @@ export class CommitStatusBar {
   private getMappings: () => GitmojiMapping[];
   private getOutputFormat: () => GitmojiOutputFormat;
   private getEnableScopeMatching: () => boolean;
+  private enabled = false;
+  private disposed = false;
+  private generation = 0;
 
   constructor(
     getMappings: () => GitmojiMapping[],
@@ -43,14 +46,19 @@ export class CommitStatusBar {
 
   /** Forces a refresh, for example after the dictionary changed. */
   public refresh(): void {
+    this.generation++;
     this.lastMessage = undefined;
     void this.update();
   }
 
   public applyEnabledState(): void {
+    if (this.disposed) return;
     const enabled = vscode.workspace
       .getConfiguration("autoGitmoji")
       .get<boolean>("showStatusBar", true);
+
+    this.enabled = enabled;
+    this.generation++;
 
     if (!enabled) {
       this.stopPolling();
@@ -66,7 +74,11 @@ export class CommitStatusBar {
   }
 
   private async update(): Promise<void> {
+    if (!this.enabled || this.disposed) return;
+    const generation = this.generation;
     const message = await getActiveCommitMessage();
+    if (!this.enabled || this.disposed || generation !== this.generation)
+      return;
 
     if (message === undefined) {
       this.lastMessage = undefined;
@@ -105,6 +117,8 @@ export class CommitStatusBar {
   }
 
   public dispose(): void {
+    this.disposed = true;
+    this.generation++;
     this.stopPolling();
     this.item.dispose();
   }

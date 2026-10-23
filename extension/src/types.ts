@@ -30,6 +30,7 @@ export interface GitAPI {
 
 export interface GitRepository {
   rootUri: Uri;
+  ui?: { readonly selected: boolean };
   inputBox: {
     value: string;
   };

@@ -2,6 +2,14 @@
 
 All releases by **KueTech Digital** — [kuetech.at](https://kuetech.at)
 
+## 1.5.0
+
+- Add a dedicated commit Gitmoji picker to the Source Control toolbar, respecting output format and position settings.
+- Keep formatting and picker writes in their original repository; honor SCM selection and refuse ambiguous repository fallbacks or changed drafts.
+- Preserve the editor and selections captured before opening the picker, with multi-cursor insertion and protection against changed documents.
+- Prevent duplicate Gitmojis with after-type formatting and auto-match; preserve commit bodies, trailers, whitespace and line endings.
+- Prevent pending background updates from writing or showing hints after auto-match or the status bar is disabled or disposed.
+
 ## 1.4.0
 
 ### Security & Hardening
