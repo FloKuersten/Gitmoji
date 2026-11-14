@@ -2,6 +2,9 @@ import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
 import { spawnSync } from "child_process";
+import { registerCommitComposer } from "./commitComposer";
+import { GitmojiPicker } from "./gitmojiPicker";
+import { registerWorkspaceSetup } from "./workspaceSetup";
 import { captureEditorInsertion } from "./editorInsertion";
 import { CommitAutoMatch } from "./autoMatch";
 import {
@@ -13,7 +16,6 @@ import { registerGitmojiCompletion } from "./completion";
 import {
   formatCommitMessage,
   formatDocstringBlock,
-  formatToken,
   insertCommitToken,
 } from "./gitmojiMatcher";
 import { getCommitMessageTarget } from "./scmIntegration";
@@ -293,7 +295,8 @@ function registerFormatDocstringCommand(
 
 function registerInsertPickerCommand(
   context: vscode.ExtensionContext,
-  statusBar: CommitStatusBar
+  statusBar: CommitStatusBar,
+  picker: GitmojiPicker
 ): void {
   const pick = async (
     commitOnly = false,
@@ -313,29 +316,11 @@ function registerInsertPickerCommand(
       );
       return;
     }
-    const outputFormat = getOutputFormat();
-    const items = sortedMappings.map((m) => {
-      const token = formatToken(m, outputFormat);
-      const categoryBadge = m.category ? `[${m.category}] ` : "";
-      const semverText = m.semver ? ` · ${m.semver}` : "";
-      const desc = m.description
-        ? `${m.description}${semverText}`
-        : m.semver
-          ? m.semver
-          : "";
-      return {
-        label: `${m.gitmoji} ${m.name ?? m.keywords[0]}`,
-        description: `${categoryBadge}${desc}`,
-        detail: [m.code, m.category, ...m.keywords].filter(Boolean).join(", "),
-        token,
-      };
-    });
-
-    const picked = await vscode.window.showQuickPick(items, {
-      placeHolder: `Select a Gitmoji for ${editor ? path.basename(editor.document.fileName) : path.basename(target!.repository.rootUri.fsPath)}`,
-      matchOnDetail: true,
-      matchOnDescription: true,
-    });
+    const picked = await picker.pick(
+      sortedMappings,
+      getOutputFormat(),
+      `Gitmoji for ${editor ? path.basename(editor.document.fileName) : path.basename(target!.repository.rootUri.fsPath)}`
+    );
 
     if (!picked) {
       return;
@@ -346,6 +331,8 @@ function registerInsertPickerCommand(
         vscode.window.showWarningMessage(
           "The original editor changed or could not accept the edit. Please open the picker again."
         );
+      } else {
+        await picker.record(picked.mapping);
       }
       return;
     }
@@ -363,6 +350,8 @@ function registerInsertPickerCommand(
         vscode.window.showInformationMessage(
           "A Gitmoji is already present in the commit subject."
         );
+      } else {
+        await picker.record(picked.mapping);
       }
       statusBar.refresh();
     }
@@ -596,7 +585,25 @@ export function activate(context: vscode.ExtensionContext): void {
   registerSupportCommand(context);
   registerFormatCommitCommand(context, statusBar);
   registerFormatDocstringCommand(context);
-  registerInsertPickerCommand(context, statusBar);
+  const picker = new GitmojiPicker(context);
+  registerInsertPickerCommand(context, statusBar, picker);
+  registerCommitComposer(
+    context,
+    getMappings,
+    getPosition,
+    getOutputFormat,
+    () => statusBar.refresh(),
+    getEnableScopeMatching
+  );
+  registerWorkspaceSetup(context);
+  context.subscriptions.push(
+    vscode.commands.registerCommand("autoGitmoji.clearRecent", async () => {
+      await picker.clearRecent();
+      vscode.window.showInformationMessage(
+        "Recent Gitmojis cleared. Your favorites are kept."
+      );
+    })
+  );
   registerOpenDictionaryCommand(context);
   registerAutoFormatOnBlur(context);
   registerInstallGitHookCommand(context);

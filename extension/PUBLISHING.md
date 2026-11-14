@@ -26,10 +26,10 @@ npm.cmd run openvsx:check
 npm.cmd run package
 ```
 
-That produces `auto-gitmoji-docs-1.5.1.vsix`. Install it locally first:
+That produces `auto-gitmoji-docs-1.6.0.vsix`. Install it locally first:
 
 ```powershell
-code --install-extension auto-gitmoji-docs-1.5.1.vsix
+code --install-extension auto-gitmoji-docs-1.6.0.vsix
 ```
 
 Or in Cursor: **Extensions → ⋯ → Install from VSIX…**
@@ -127,9 +127,9 @@ Remove-Item Env:OVSX_PAT, Env:VSCE_PAT
 
 ## Next version
 
-1. Bump `"version"` in `extension/package.json` and root `package.json`.
+1. Bump `"version"` in `extension/package.json` and its `package-lock.json`. The CLI has its own version in `cli/package.json`.
 2. Add notes to `extension/CHANGELOG.md`.
-3. Commit, push, then run `npm.cmd run publish:all` (or let GitHub Actions publish on Release).
+3. Commit and push to `main`. Open VSX publishes automatically after checks pass. Visual Studio Marketplace publishing remains a separate manual or release-triggered workflow.
 
 ---
 

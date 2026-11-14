@@ -15,7 +15,7 @@ function loadMappings() {
 
 const EMOJI_PREFIX = /^(?:\p{Extended_Pictographic}|[0-9#*]\uFE0F?\u20E3)/u;
 const CODE_PREFIX = /^:[a-z0-9_+-]+:/i;
-const CONVENTIONAL_PREFIX = /^(\w+)(\([^)]*\))?(!)?:\s*/;
+const CONVENTIONAL_PREFIX = /^(\w+)(\([^)]*\))?(!)?:[\t ]*/;
 
 function hasLeadingGitmoji(text) {
   const trimmed = text.trimStart();
@@ -23,6 +23,17 @@ function hasLeadingGitmoji(text) {
     return false;
   }
   return EMOJI_PREFIX.test(trimmed) || CODE_PREFIX.test(trimmed);
+}
+
+function getSubject(message) {
+  return message.match(/^[^\r\n]*/)?.[0] ?? '';
+}
+
+function hasCommitGitmoji(message) {
+  const summary = getSubject(message).trimStart();
+  const prefix = summary.match(CONVENTIONAL_PREFIX)?.[0];
+  return hasLeadingGitmoji(summary) ||
+    (prefix !== undefined && hasLeadingGitmoji(summary.slice(prefix.length)));
 }
 
 function extractCommitKeyword(message) {
@@ -72,11 +83,12 @@ function findMapping(token, mappings) {
 }
 
 function matchGitmoji(text, mappings = loadMappings(), enableScopeMatching = true) {
-  if (hasLeadingGitmoji(text)) {
+  const subject = getSubject(text);
+  if (hasCommitGitmoji(subject)) {
     return null;
   }
 
-  const keyword = extractCommitKeyword(text);
+  const keyword = extractCommitKeyword(subject);
   if (!keyword) {
     return null;
   }
@@ -84,7 +96,7 @@ function matchGitmoji(text, mappings = loadMappings(), enableScopeMatching = tru
   const typeMapping = findMapping(keyword, mappings);
 
   if (enableScopeMatching) {
-    const scope = extractCommitScope(text);
+    const scope = extractCommitScope(subject);
     if (scope) {
       const scopeMapping = findMapping(scope, mappings);
       if (scopeMapping) {
@@ -116,7 +128,8 @@ function applyPosition(message, token, position) {
     const conventional = message.match(CONVENTIONAL_PREFIX);
     if (conventional) {
       const prefix = conventional[0];
-      return `${prefix}${token} ${message.slice(prefix.length)}`;
+      const space = /[\t ]$/.test(prefix) ? '' : ' ';
+      return `${prefix}${space}${token} ${message.slice(prefix.length)}`;
     }
   }
   return `${token} ${message}`;
@@ -133,8 +146,9 @@ function formatCommitMessage(
     mappings = loadMappings()
   } = options;
 
-  const trimmed = message.trim();
-  if (!trimmed || hasLeadingGitmoji(trimmed)) {
+  const subject = getSubject(message);
+  const trimmed = subject.trim();
+  if (!trimmed || hasCommitGitmoji(subject)) {
     return message;
   }
 
@@ -143,7 +157,11 @@ function formatCommitMessage(
     return message;
   }
 
-  return applyPosition(trimmed, formatToken(mapping, outputFormat), position);
+  // Only change the subject. Git hooks must retain body text, trailers, line
+  // endings and trailing whitespace byte-for-byte, including a final newline.
+  const content = subject.trimStart();
+  const indent = subject.slice(0, subject.length - content.length);
+  return `${indent}${applyPosition(content, formatToken(mapping, outputFormat), position)}${message.slice(subject.length)}`;
 }
 
 function filterMappings(filter, mappings = loadMappings()) {

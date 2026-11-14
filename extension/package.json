@@ -2,7 +2,7 @@
   "name": "auto-gitmoji-docs",
   "displayName": "Auto Gitmoji & Docs",
   "description": "Insert Gitmojis into commit messages and docstrings using a local dictionary — no AI, no network. By KueTech Digital.",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "publisher": "kuetech",
   "license": "MIT",
   "icon": "media/icon.png",
@@ -79,6 +79,20 @@
         "command": "autoGitmoji.insertCommitGitmoji",
         "title": "Auto Gitmoji: Pick Gitmoji for Commit",
         "icon": "$(smiley)"
+      },
+      {
+        "command": "autoGitmoji.composeCommit",
+        "title": "Auto Gitmoji: Compose Commit Message",
+        "icon": "$(list-ordered)"
+      },
+      {
+        "command": "autoGitmoji.clearRecent",
+        "title": "Auto Gitmoji: Clear Recent Gitmojis"
+      },
+      {
+        "command": "autoGitmoji.openProjectMappings",
+        "title": "Auto Gitmoji: Open Project Mappings",
+        "icon": "$(settings-gear)"
       }
     ],
     "keybindings": [
@@ -95,6 +109,11 @@
     ],
     "menus": {
       "scm/title": [
+        {
+          "command": "autoGitmoji.composeCommit",
+          "group": "navigation@97",
+          "when": "scmProvider == git"
+        },
         {
           "command": "autoGitmoji.insertCommitGitmoji",
           "group": "navigation@98",
@@ -163,7 +182,18 @@
                   "patch",
                   null
                 ],
-                "description": "Optional semver impact from the official gitmoji list."
+                "description": "Release impact displayed in the picker."
+              },
+              "category": {
+                "type": "string",
+                "description": "Picker category for this Gitmoji."
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Additional search terms in the Gitmoji picker."
               }
             },
             "additionalProperties": false
@@ -242,7 +272,16 @@
           "description": "Show a one-time support reminder after major extension updates."
         }
       }
-    }
+    },
+    "jsonValidation": [
+      {
+        "fileMatch": [
+          "**/.vscode/auto-gitmoji.json",
+          "**/.gitmoji-map.json"
+        ],
+        "url": "./schemas/workspace-mappings.schema.json"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run build",
@@ -251,8 +290,8 @@
     "watch": "node esbuild.mjs --watch",
     "typecheck": "tsc -p ./tsconfig.test.json",
     "lint": "eslint .",
-    "format": "prettier --write \"src/**/*.ts\" \"scripts/**/*.mjs\" \"*.{json,mjs}\"",
-    "format:check": "prettier --check \"src/**/*.ts\" \"scripts/**/*.mjs\" \"*.{json,mjs}\"",
+    "format": "prettier --write \"src/**/*.ts\" \"scripts/**/*.{mjs,cjs}\" \"*.{json,mjs}\" \"schemas/**/*.json\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"scripts/**/*.{mjs,cjs}\" \"*.{json,mjs}\" \"schemas/**/*.json\"",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",

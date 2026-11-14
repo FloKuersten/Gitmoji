@@ -2,6 +2,13 @@
 
 All releases by **KueTech Digital** — [kuetech.at](https://kuetech.at)
 
+## 1.6.0
+
+- Add a guided conventional commit composer with repository selection, editable type/scope/summary, breaking-change information and a final preview. Existing bodies and trailers remain intact; stale drafts are protected.
+- Add persistent favorites and recent choices to the searchable native Gitmoji picker. Save only mapping identifiers locally and provide a command to clear recents.
+- Add an Open Project Mappings command and bundled JSON schema for team mapping files.
+- Bring CLI commit formatting in line with the extension's subject-only edits, whitespace preservation and duplicate detection.
+
 ## 1.5.1
 
 - Update development dependencies to patch MSAL Node, follow-redirects, qs and minimatch advisories.

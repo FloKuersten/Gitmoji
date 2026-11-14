@@ -4,12 +4,18 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   {
-    ignores: ["out/**", "dist/**", "node_modules/**", "coverage/**"],
+    ignores: [
+      "out/**",
+      "dist/**",
+      "node_modules/**",
+      "coverage/**",
+      ".cache/**",
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ["*.mjs", "scripts/**/*.mjs"],
+    files: ["*.mjs", "scripts/**/*.{mjs,cjs}"],
     languageOptions: {
       globals: globals.node,
     },

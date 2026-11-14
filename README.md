@@ -27,6 +27,12 @@
 
 ---
 
+## New in 1.6
+
+Build and preview conventional commits with the new Source Control composer, star your favorite Gitmojis, filter by category, and reuse recent choices. Team mappings now have a setup command and JSON validation. The CLI preserves commit bodies and trailers just like the extension.
+
+See the [extension guide](extension/README.md) for commands and examples.
+
 ## 🌐 Supported IDEs & Editors
 
 Auto Gitmoji runs natively in **every common developer environment**:

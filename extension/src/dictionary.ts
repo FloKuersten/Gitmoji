@@ -58,7 +58,19 @@ export function isValidMapping(value: unknown): value is GitmojiMapping {
     candidate.keywords.length > 0 &&
     candidate.keywords.every(
       (keyword) => typeof keyword === "string" && keyword.trim().length > 0
-    )
+    ) &&
+    [
+      candidate.code,
+      candidate.name,
+      candidate.description,
+      candidate.category,
+    ].every((field) => field === undefined || typeof field === "string") &&
+    (candidate.tags === undefined ||
+      (Array.isArray(candidate.tags) &&
+        candidate.tags.every((tag) => typeof tag === "string"))) &&
+    (candidate.semver === undefined ||
+      candidate.semver === null ||
+      ["major", "minor", "patch"].includes(candidate.semver))
   );
 }
 

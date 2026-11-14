@@ -19,6 +19,16 @@ Insert [Gitmojis](https://gitmoji.dev) into **Git commit messages** and **docstr
 
 ---
 
+## New in 1.6
+
+**Compose a commit from Source Control.** Use **Auto Gitmoji: Compose Commit Message** (the list icon in the repository toolbar) to choose a conventional type, scope, summary and breaking-change information. Review the complete message before applying it. The composer only fills the commit input; you stay in control of staging and committing.
+
+**Keep your Gitmojis close.** The picker now groups favorites and recent choices above the full dictionary. Star an entry to keep it at the top. Search by name, shortcode, keyword, category or tag. Recent choices are recorded after insertion, and **Clear Recent Gitmojis** resets them without removing favorites. Only Gitmoji identifiers are saved locally; commit messages are never added to history.
+
+**Share team mappings.** Run **Open Project Mappings** to open your existing project file or create a starter. The JSON editor validates mapping fields and suggests supported properties. Existing files are preserved.
+
+The standalone CLI also preserves commit bodies, trailers and line endings, and avoids adding a second emoji after a conventional type.
+
 ## 🎯 Features
 
 | Feature | Emoji | Description |
@@ -65,6 +75,9 @@ Insert [Gitmojis](https://gitmoji.dev) into **Git commit messages** and **docstr
 
 | Command | Shortcut | What it does |
 |---------|----------|----------------|
+| `Auto Gitmoji: Compose Commit Message` | SCM list icon | Build and preview a conventional commit |
+| `Auto Gitmoji: Open Project Mappings` | — | Edit or create a team mapping file |
+| `Auto Gitmoji: Clear Recent Gitmojis` | — | Clear local recent choices; keep favorites |
 | `Auto Gitmoji: Format Commit Message` | `Ctrl+Alt+G` | 💬 Add Gitmoji to Git commit box |
 | `Auto Gitmoji: Pick Gitmoji for Commit` | SCM smiley button | Choose a Gitmoji for the selected repository |
 | `Auto Gitmoji: Pick and Insert Gitmoji` | `Ctrl+Alt+M` | 🎨 Choose emoji from list |

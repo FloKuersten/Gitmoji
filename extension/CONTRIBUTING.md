@@ -80,6 +80,19 @@ Press **F5** in VS Code or Cursor to launch the Extension Development Host. Use 
 
 Matching logic lives in pure functions in [src/gitmojiMatcher.ts](src/gitmojiMatcher.ts) and [src/dictionary.ts](src/dictionary.ts), so it is unit tested without a VS Code host. Any change to matching behaviour needs a test in [src/\_\_tests\_\_](src/__tests__).
 
+### VS Code integration smoke checks
+
+`scripts/integration-smoke.cjs` runs inside the real VS Code Extension Development Host without additional test dependencies. Create two disposable Git repositories under `extension/.cache/`, list them in a `.code-workspace` file in the same cache, then launch VS Code with:
+
+- `--extensionDevelopmentPath=<absolute extension directory>`
+- `--extensionTestsPath=<absolute extension directory>/scripts/integration-smoke.cjs`
+- `--user-data-dir=<absolute cache directory>/profile`
+- `--extensions-dir=<absolute cache directory>/extensions`
+- `--disable-extensions --disable-workspace-trust --skip-welcome`
+- the absolute path of the disposable `.code-workspace` file
+
+Run `npm run build` first. The runner refuses folders outside `.cache`, verifies real Git input targeting and editor edits, cancels the composer/picker to check draft preservation, and writes `.cache/integration-result.json`. Never point it at your everyday workspace or profile.
+
 ## Code style
 
 - TypeScript strict mode is enabled.
