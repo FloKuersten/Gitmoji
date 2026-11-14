@@ -79,6 +79,10 @@ npm audit --omit=dev --audit-level=low
 npm audit --audit-level=moderate
 ```
 
+## Temporary dependency overrides
+
+`extension/package.json` overrides only vulnerable `minimatch` versions (`>=7.0.0 <11.0.1`) with `^11.0.1` to address [GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249). Some linting and packaging dependencies still require the affected major version. Keep lint, typecheck, tests and VSIX packaging passing when updating this override, and remove it once all parent dependencies select patched versions themselves.
+
 ## Public repository contents
 
 This repository is intentionally public. The following are published on purpose and are not secrets:

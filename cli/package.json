@@ -1,6 +1,6 @@
 {
   "name": "auto-gitmoji",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Universal Gitmoji engine & Git hook for all IDEs — VS Code, JetBrains, Neovim, Sublime, Visual Studio, Terminal.",
   "bin": {
     "auto-gitmoji": "./bin/auto-gitmoji.js"

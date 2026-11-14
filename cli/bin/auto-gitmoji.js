@@ -9,8 +9,7 @@ const {
   loadMappings,
   filterMappings,
   getCategoryList,
-  getMappingsByCategory,
-  hasLeadingGitmoji
+  getMappingsByCategory
 } = require('../src/matcher');
 
 const pkg = require('../package.json');

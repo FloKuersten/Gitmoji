@@ -2,6 +2,11 @@
 
 All releases by **KueTech Digital** — [kuetech.at](https://kuetech.at)
 
+## 1.5.1
+
+- Update development dependencies to patch MSAL Node, follow-redirects, qs and minimatch advisories.
+- Replace punctuation suffix matching with a linear scan to prevent crafted commit subjects from slowing keyword parsing in the extension and CLI.
+
 ## 1.5.0
 
 - Add a dedicated commit Gitmoji picker to the Source Control toolbar, respecting output format and position settings.

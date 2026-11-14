@@ -112,8 +112,13 @@ export function extractCommitKeyword(message: string): string | null {
     return conventional[1];
   }
 
-  const firstWord = trimmed.split(/\s+/)[0]?.replace(/[!?:,.]+$/, "");
-  return firstWord || null;
+  const firstWord = trimmed.split(/\s+/)[0];
+  let end = firstWord.length;
+  // Scan once from the end; an unanchored suffix regex retries quadratically.
+  while (end > 0 && "!?:,.".includes(firstWord[end - 1])) {
+    end--;
+  }
+  return firstWord.slice(0, end) || null;
 }
 
 export function extractCommitScope(message: string): string | null {
