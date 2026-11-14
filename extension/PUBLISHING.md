@@ -26,10 +26,10 @@ npm.cmd run openvsx:check
 npm.cmd run package
 ```
 
-That produces `auto-gitmoji-docs-1.1.0.vsix`. Install it locally first:
+That produces `auto-gitmoji-docs-1.5.1.vsix`. Install it locally first:
 
 ```powershell
-code --install-extension auto-gitmoji-docs-1.1.0.vsix
+code --install-extension auto-gitmoji-docs-1.5.1.vsix
 ```
 
 Or in Cursor: **Extensions → ⋯ → Install from VSIX…**
@@ -79,11 +79,11 @@ In Cursor, search **Auto Gitmoji & Docs** and install.
 1. Repo **Settings → Secrets and variables → Actions → New repository secret**
 2. Name: `OVSX_PAT`
 3. Value: a dedicated Open VSX token (not your local one)
-4. Either:
-   - **Actions → Publish Open VSX → Run workflow**, or
-   - Create a GitHub Release. The workflow runs on `release: published`.
+4. Push changes under `extension/` or `cli/` to `main`. The Open VSX workflow runs automatically. Changes to its workflow file also trigger it.
+   - Bump `extension/package.json` and its lockfile version for each new extension release. Already published versions are skipped; changed code requires a new version.
+   - **Actions → Publish Open VSX → Run workflow** and published GitHub Releases remain available as manual triggers.
 
-The workflow re-runs lint, typecheck, tests, packages the VSIX, then publishes.
+The workflow runs lint, formatting, dependency auditing, typecheck and tests, packages the VSIX, then publishes using the existing `OVSX_PAT` repository secret. It verifies that the exact version is publicly available on Open VSX before reporting success. Concurrent publishing runs are serialized.
 
 ---
 

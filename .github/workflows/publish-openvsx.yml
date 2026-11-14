@@ -1,6 +1,12 @@
 name: Publish Open VSX
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "extension/**"
+      - "cli/**"
+      - ".github/workflows/publish-openvsx.yml"
   release:
     types: [published]
   workflow_dispatch:
@@ -20,6 +26,7 @@ jobs:
   publish:
     name: Publish to Open VSX
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -40,6 +47,12 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Audit dependencies
+        run: npm audit --audit-level=moderate
 
       - name: Typecheck
         run: npm run typecheck
@@ -63,6 +76,31 @@ jobs:
         env:
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
         run: npm run publish:ovsx
+
+      - name: Verify public Open VSX version
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+          import { setTimeout } from 'node:timers/promises';
+          const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
+          const url = `https://open-vsx.org/api/${pkg.publisher}/${pkg.name}/${pkg.version}`;
+          for (let attempt = 0; attempt < 6; attempt++) {
+            try {
+              const response = await fetch(url, { signal: AbortSignal.timeout(15000) });
+              if (response.ok) {
+                const published = await response.json();
+                if (published.namespace === pkg.publisher && published.name === pkg.name && published.version === pkg.version) {
+                  console.log(`Verified public version: ${pkg.publisher}.${pkg.name}@${pkg.version}`);
+                  process.exit(0);
+                }
+              }
+            } catch (error) {
+              console.log(`Registry check ${attempt + 1} failed: ${error.message}`);
+            }
+            if (attempt < 5) await setTimeout(10000);
+          }
+          throw new Error(`Uploaded version is not publicly available: ${url}`);
+          NODE
 
       - name: Upload published VSIX
         uses: actions/upload-artifact@v4
